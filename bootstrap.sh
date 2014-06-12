@@ -54,7 +54,7 @@ make > /dev/null 2>&1
 make install > /dev/null 2>&1
 
 echo "Installing extra modules"
-su vagrant -c "cd /var/www/infostander_middleware && npm install" > /dev/null 2>&1
+su vagrant -c "cd /var/www/middleware_indholdskanalen && npm install" > /dev/null 2>&1
 
 # Memcache
 echo "Installing memcache"
@@ -85,7 +85,7 @@ upstream nodejs_app {
 }
 server {
   listen 80;
-  root /var/www/infostander_frontend;
+  root /var/www/frontend_indholdskanalen;
   server_name indholdskanalen.vm;
   access_log /var/log/nginx/access.log;
   error_log /var/log/nginx/error.log;
@@ -151,9 +151,9 @@ DELIM
 cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
 server {
   server_name service.indholdskanalen.vm;
-  root /var/www/service_indholdskanalen/web;
-  access_log /var/log/nginx/service_indholdskanalen_access.log;
-  error_log /var/log/nginx/service_indholdskanalen_error.log;
+  root /var/www/backend_indholdskanalen/web;
+  access_log /var/log/nginx/backend_indholdskanalen_access.log;
+  error_log /var/log/nginx/backend_indholdskanalen_error.log;
   location / {
     try_files \$uri @rewriteapp;
   }
@@ -231,7 +231,7 @@ FRMjoVlMmXmMnDeGuB4l
 -----END CERTIFICATE-----
 DELIM
 
-# Config file for middleware_infostander
+# Config file for middleware_indholdskanalen
 cat > /var/www/middleware_indholdskanalen/config.json <<DELIM
 {
   "sitename": "Beta test",
@@ -279,10 +279,10 @@ window.config = {
 DELIM
 
 # Create database
-echo "Setting up database infostander"
-echo "create database infostander" | mysql -uroot -pvagrant
+echo "Setting up database indholdskanalen"
+echo "create database indholdskanalen" | mysql -uroot -pvagrant
 
-# Setup infostander backend
+# Setup backend indholdskanalen
 echo "Setting up composer"
 cd /var/www/backend_indholdskanalen
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
