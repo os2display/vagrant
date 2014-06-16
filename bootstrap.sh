@@ -25,8 +25,7 @@ sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d
 sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.mode = 0660/c listen.mode = 0660' /etc/php5/fpm/pool.d/www.conf
 
-apt-get install -y php5-mysql > /dev/null 2>&1
-apt-get install php5-curl > /dev/null 2>&1
+apt-get install -y php5-mysql php5-curl php5-gd > /dev/null 2>&1
 
 # Nginx
 echo "Installing nginx"
