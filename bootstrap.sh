@@ -35,33 +35,12 @@ unlink /etc/nginx/sites-enabled/default
 # Setup web root
 ln -s /vagrant/htdocs /var/www
 
-# Redis
-echo "Installing redis"
-apt-get install -y redis-server > /dev/null 2>&1
-
-# Nodejs
-echo "Installing nodejs"
-apt-get install -y git > /dev/null 2>&1
-echo "Cloning node.js"
-git clone https://github.com/joyent/node.git > /dev/null 2>&1
-cd node
-git checkout v0.10.28 > /dev/null 2>&1
-
-echo "Building node.js"
-./configure --openssl-libpath=/usr/lib/ssl > /dev/null 2>&1
-make > /dev/null 2>&1
-make install > /dev/null 2>&1
-
-echo "Installing extra modules"
-su vagrant -c "cd /var/www/middleware_indholdskanalen && npm install" > /dev/null 2>&1
-
 # Memcache
 echo "Installing memcache"
 apt-get install -y memcached php5-memcached > /dev/null 2>&1
 
 # APC
 echo "Configuring APC"
-
 apt-get install -y php-apc > /dev/null 2>&1
 
 cat > /etc/php5/conf.d/apc.ini <<DELIM
@@ -78,68 +57,6 @@ apc.cache_by_default=1
 DELIM
 
 # Config files into nginx
-cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
-upstream nodejs_app {
-  server 127.0.0.1:3000;
-}
-server {
-  listen 80;
-  root /var/www/frontend_indholdskanalen;
-  server_name indholdskanalen.vm;
-  access_log /var/log/nginx/access.log;
-  error_log /var/log/nginx/error.log;
-  location /proxy/ {
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header Host \$http_host;
-    proxy_buffering off;
-    proxy_pass http://nodejs_app/;
-    proxy_redirect off;
-  }
-  location /socket.io/ {
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_pass http://nodejs_app;
-  }
-  location / {
-    try_files \$uri \$uri/ /index.html;
-  }
-}
-server {
-  listen 443;
-  server_name indholdskanalen.vm;
-  root /var/www/frontend_indholdskanalen;
-  index index.html;
-  access_log /var/log/nginx/access.log;
-  error_log /var/log/nginx/error.log;
-  location /proxy/ {
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header Host \$http_host;
-    proxy_buffering off;
-    proxy_pass http://nodejs_app/;
-    proxy_redirect off;
-  }
-  location /socket.io/ {
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_pass http://nodejs_app;
-  }
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/server.cert;
-  ssl_certificate_key /etc/ssl/nginx/server.key;
-  ssl_session_timeout 5m;
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
-  location / {
-    try_files \$uri \$uri/ =404;
-  }
-}
-DELIM
-
 cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
 server {
   server_name service.indholdskanalen.vm;
@@ -167,7 +84,6 @@ DELIM
 
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/indholdskanalen.vm.conf /etc/nginx/sites-enabled/indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -223,64 +139,17 @@ FRMjoVlMmXmMnDeGuB4l
 -----END CERTIFICATE-----
 DELIM
 
-# Config file for middleware_indholdskanalen
-cat > /var/www/middleware_indholdskanalen/config.json <<DELIM
-{
-  "sitename": "Beta test",
-  "port": 3000,
-  "ssl": {
-    "active": false,
-    "key": "/etc/ssl/nginx/server.key",
-    "cert": "/etc/ssl/nginx/server.cert",
-    "ca": false
-  },
-  "secret": "THIS IS THE SUPER SECRET KEY",
-  "debug": true,
-  "log_level": 10,
-  "maintenance": {
-    "username": "admin",
-    "password": "password"
-  },
-  "redis": {
-    "port": "6379",
-    "host": "localhost",
-    "auth": null
-  },
-  "backend": {
-    "host": "service.indholdskanalen.vm",
-    "ip": "127.0.0.1",
-    "port": "80"
-  }
-}
-DELIM
-
-# Config file for instander_frontend
-cat > /var/www/frontend_indholdskanalen/js/config.js <<DELIM
-window.config = {
-  resource: {
-    server: '//indholdskanalen.vm/',
-    uri: 'proxy'
-  },
-  ws: {
-    server: 'http://indholdskanalen.vm'
-  },
-  cookie: {
-    secure: true
-  }
-}
-DELIM
-
 # Create database
 echo "Setting up database indholdskanalen"
 echo "create database indholdskanalen" | mysql -uroot -pvagrant
 
 # Setup backend indholdskanalen
 echo "Setting up composer"
-cd /var/www/backend_indholdskanalen
+cd /vagrant/htdocs/backend_indholdskanalen
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
 
 # Config file for backend_indholdskanalen
-cat > /var/www/backend_indholdskanalen/app/config/parameters.yml <<DELIM
+cat > /vagrant/htdocs/backend_indholdskanalen/app/config/parameters.yml <<DELIM
 parameters:
   database_driver: pdo_mysql
   database_host: 127.0.0.1
@@ -294,8 +163,6 @@ parameters:
   mailer_password: null
   locale: en
   secret: ThisTokenIsNotSoSecretChangeIt
-  middleware_host: "http://localhost:3000"
-  absolute_path_to_server: "http://service.indholdskanalen.vm/"
 DELIM
 
 php composer.phar install  > /dev/null 2>&1
@@ -311,9 +178,6 @@ service php5-fpm start > /dev/null 2>&1
 
 echo "Starting nginx"
 service nginx start > /dev/null 2>&1
-
-echo "Starting redis"
-service redis-server start > /dev/null 2>&1
 
 echo "Starting mysql"
 service mysql start > /dev/null 2>&1
