@@ -67,7 +67,7 @@ server {
     try_files \$uri @rewriteapp;
   }
   location @rewriteapp {
-    rewrite ^(.*)\$ /app.php/\$1 last;
+    rewrite ^(.*)\$ /app_dev.php/\$1 last;
   }
   location ~ ^/(app|app_dev|config)\.php(/|\$) {
     fastcgi_pass unix:/var/run/php5-fpm.sock;
