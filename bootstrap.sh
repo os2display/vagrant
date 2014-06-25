@@ -15,8 +15,7 @@ apt-get install -y mysql-server > /dev/null 2>&1
 # PHP5
 echo "Installing php"
 
-apt-get install -y php5-fpm > /dev/null 2>&1
-apt-get install -y php5-cli > /dev/null 2>&1
+apt-get install -y php5-fpm php5-cli php5-xdebug > /dev/null 2>&1
 
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/cli/php.ini
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/fpm/php.ini
@@ -54,6 +53,14 @@ apc.num_files_hint=1024
 apc.mmap_file_mask=/tmp/apc.XXXXXX
 apc.enable_cli=1
 apc.cache_by_default=1
+DELIM
+
+cat << DELIM >> /etc/php5/conf.d/20-xdebug.ini
+xdebug.remote_enable=1
+xdebug.remote_handler=dbgp
+xdebug.remote_host=192.168.50.1
+xdebug.remote_port=9000
+xdebug.remote_autostart=0
 DELIM
 
 # Config files into nginx
