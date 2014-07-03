@@ -6,7 +6,6 @@ apt-get update > /dev/null 2>&1
 
 # Mysql
 echo "Configuring mysql"
-
 debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password vagrant' > /dev/null 2>&1
 debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password vagrant' > /dev/null 2>&1
 
@@ -14,17 +13,17 @@ apt-get install -y mysql-server > /dev/null 2>&1
 
 # PHP5
 echo "Installing php"
-
-apt-get install -y php5-fpm php5-cli php5-xdebug > /dev/null 2>&1
+apt-get install -y php5-fpm php5-cli php5-xdebug php5-mysql php5-curl php5-gd git > /dev/null 2>&1
 
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/cli/php.ini
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/fpm/php.ini
 
+sed -i '/upload_max_filesize = 2M/cupload_max_filesize = 256M' /etc/php5/fpm/php.ini
+sed -i '/post_max_size = 8M/cpost_max_size = 256M' /etc/php5/fpm/php.ini
+
 sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.mode = 0660/c listen.mode = 0660' /etc/php5/fpm/pool.d/www.conf
-
-apt-get install -y php5-mysql php5-curl php5-gd > /dev/null 2>&1
 
 # Nginx
 echo "Installing nginx"
@@ -179,16 +178,37 @@ php app/console doctrine:schema:update --force
 echo "Setting up super-user:   admin/admin"
 php app/console fos:user:create admin test@etek.dk admin --super-admin
 
+# Elastic search
+apt-get install openjdk-7-jre -y > /dev/null 2>&1
+cd /root
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.2.1.deb > /dev/null 2>&1
+rm elasticsearch-1.2.1.deb
+update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
+
+# NodeJS middleware
+echo "Installing nodejs"
+apt-get install -y python-software-properties python > /dev/null 2>&1
+add-apt-repository ppa:chris-lea/node.js -y > /dev/null 2>&1
+sed -i 's/wheezy/lucid/g' /etc/apt/sources.list.d/chris-lea-node_js-wheezy.list
+apt-get update > /dev/null 2>&1
+apt-get install -y nodejs > /dev/null 2>&1
+
+echo "Installing middleware requirements"
+cd /vagrant/htdocs/search_node/
+npm install > /dev/null 2>&1
+
 # Start services
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
 
 echo "Starting nginx"
-service nginx start > /dev/null 2>&1
+service nginx restart > /dev/null 2>&1
 
 echo "Starting mysql"
 service mysql start > /dev/null 2>&1
 
-service nginx restart
+echo "Starting ElasticSearch"
+service elasticsearch restart
 
 echo "Done"
