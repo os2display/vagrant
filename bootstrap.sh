@@ -176,7 +176,7 @@ php app/console doctrine:schema:update --force
 
 # Setup super-user
 echo "Setting up super-user:   admin/admin"
-#php app/console fos:user:create --super-admin admin test@etek.dk admin
+php app/console fos:user:create --super-admin admin test@etek.dk admin
 
 # Elastic search
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
@@ -196,9 +196,110 @@ apt-get install -y nodejs > /dev/null 2>&1
 
 echo "Installing middleware requirements"
 cd /vagrant/htdocs/search_node/
-npm install > /dev/null 2>&1
-npm install forever > /dev/null 2>&1
+su vagrant -c "npm install > /dev/null 2>&1"
+
+cat > /etc/init.d/middleware <<DELIM
+#!/bin/sh
+
+NODE_APP='app.js'
+APP_DIR='/vagrant/htdocs/search_node';
+PID_FILE=\$APP_DIR/app.pid
+LOG_FILE=\$APP_DIR/app.log
+NODE_EXEC=\`which node\`
+
+###############
+# chkconfig: - 58 74
+# description: node-app is the script for starting a node app on boot.
+### BEGIN INIT INFO
+# Provides: node
+# Required-Start:    \$network \$remote_fs \$local_fs
+# Required-Stop:     \$network \$remote_fs \$local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: start and stop node
+# Description: Node process for app
+### END INIT INFO
+
+start_app (){
+    if [ -f \$PID_FILE ]
+    then
+        PID=\`cat $PID_FILE\`
+        if ps -p \$PID > /dev/null; then
+            echo "\$PID_FILE exists, process is already running"
+            exit 1
+        else
+            rm \$PID_FILE
+            start_app
+        fi
+    else
+        echo "Starting node app..."
+        if [ ! -d \$APP_DIR ]
+        then
+            sleep 30
+        fi
+        cd \$APP_DIR
+        \$NODE_EXEC \$APP_DIR/\$NODE_APP  1>\$LOG_FILE 2>&1 &
+        echo \$! > \$PID_FILE;
+    fi
+}
+
+stop_app (){
+    if [ ! -f \$PID_FILE ]
+    then
+        echo "\$PID_FILE does not exist, process is not running"
+        exit 1
+    else
+        echo "Stopping \$APP_DIR/\$NODE_APP ..."
+        echo "Killing \`cat \$PID_FILE\`"
+        kill \`cat \$PID_FILE\`;
+        rm -f \$PID_FILE;
+        echo "Node stopped"
+    fi
+}
+
+case "\$1" in
+    start)
+        start_app
+    ;;
+
+    stop)
+        stop_app
+    ;;
+
+    restart)
+        stop_app
+        start_app
+    ;;
+
+    status)
+        if [ -f \$PID_FILE ]
+        then
+            PID=\`cat \$PID_FILE\`
+            if [ -z "\`ps ef | awk '{print \$1}' | grep "^\$PID\$"\`" ]
+            then
+                echo "Node app stopped but pid file exists"
+            else
+                echo "Node app running with pid \$PID"
+
+            fi
+        else
+            echo "Node app stopped"
+        fi
+    ;;
+
+    *)
+        echo "Usage: \$0 {start|stop|restart|status}"
+        exit 1
+    ;;
+esac
+DELIM
+chmod +x /etc/init.d/middleware
+update-rc.d middleware defaults
+
 # Start services
+echo "Starting search_node"
+service middleware start > /dev/null 2>&1
+
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
 
