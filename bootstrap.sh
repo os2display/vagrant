@@ -176,7 +176,7 @@ php app/console doctrine:schema:update --force
 
 # Setup super-user
 echo "Setting up super-user:   admin/admin"
-php app/console fos:user:create admin test@etek.dk admin --super-admin
+#php app/console fos:user:create --super-admin admin test@etek.dk admin
 
 # Elastic search
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
@@ -197,7 +197,7 @@ apt-get install -y nodejs > /dev/null 2>&1
 echo "Installing middleware requirements"
 cd /vagrant/htdocs/search_node/
 npm install > /dev/null 2>&1
-
+npm install forever > /dev/null 2>&1
 # Start services
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
