@@ -188,7 +188,7 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # NodeJS middleware
 echo "Installing nodejs"
-apt-get install -y python-software-properties python > /dev/null 2>&1
+apt-get install -y python-software-properties python redis-server > /dev/null 2>&1
 add-apt-repository ppa:chris-lea/node.js -y > /dev/null 2>&1
 sed -i 's/wheezy/lucid/g' /etc/apt/sources.list.d/chris-lea-node_js-wheezy.list
 apt-get update > /dev/null 2>&1
