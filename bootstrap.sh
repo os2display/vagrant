@@ -196,7 +196,7 @@ apt-get install -y nodejs > /dev/null 2>&1
 
 echo "Installing middleware requirements"
 cd /vagrant/htdocs/search_node/
-su vagrant -c "npm install > /dev/null 2>&1"
+npm install -g > /dev/null 2>&1"
 
 cat > /etc/init.d/middleware <<DELIM
 #!/bin/sh
