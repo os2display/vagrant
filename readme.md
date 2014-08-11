@@ -12,9 +12,11 @@ $ git clone git@github.com:aakb/infostander_frontend.git frontend_indholdskanale
 This can also be done with the setup_htdocs.sh script. This script deletes the htdocs folder if it exists, creates a new one and pulls the repositories from git.
 
 # To get the system up and running
-You need to start the middleware. Do the following:
+You need to start the search node. Do the following:
 <pre>
 $ vagrant ssh
+$ cd /vagrant/htdocs/search_node/
+$ npm install
 $ /var/www/middleware_infostander/app.js
 </pre>
 
