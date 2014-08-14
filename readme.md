@@ -1,15 +1,16 @@
 # Vagrant setup
-vagrant plugin install vagrant-hostsupdater
+<pre>
+$ vagrant plugin install vagrant-hostsupdater
+</pre>
 
 # Make htdocs and sync repositories
 <pre>
 $ mkdir htdocs
 $ cd htdocs
 $ git clone git@github.com:Indholdskanalen/indholdskanalen.git backend_indholdskanalen
-$ git clone git@github.com:aakb/infostander_middleware.git middleware_indholdskanalen
-$ git clone git@github.com:aakb/infostander_frontend.git frontend_indholdskanalen
+$ git clone git@github.com:Indholdskanalen/search_node.git search_node
 </pre>
-This can also be done with the setup_htdocs.sh script. This script deletes the htdocs folder if it exists, creates a new one and pulls the repositories from git.
+This can also be done with the setup_htdocs.sh script. This script creates the htdocs folder and pulls the repositories from git.
 
 # To get the system up and running
 You need to start the search node. Do the following:
@@ -17,7 +18,8 @@ You need to start the search node. Do the following:
 $ vagrant ssh
 $ cd /vagrant/htdocs/search_node/
 $ npm install
-$ /var/www/middleware_infostander/app.js
+$ cp example.config.json config.json
+$ ./app.js
 </pre>
 
 # To setup cron
