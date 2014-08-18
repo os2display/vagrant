@@ -33,6 +33,10 @@ unlink /etc/nginx/sites-enabled/default
 # Setup web root
 ln -s /vagrant/htdocs /var/www
 
+# Redis
+echo "Installing redis"
+apt-get install -y redis-server > /dev/null 2>&1
+
 # Memcache
 echo "Installing memcache"
 apt-get install -y memcached php5-memcached > /dev/null 2>&1
@@ -54,6 +58,9 @@ apc.enable_cli=1
 apc.cache_by_default=1
 DELIM
 
+# x-debug
+echo "Configure x-debug"
+
 cat << DELIM >> /etc/php5/conf.d/20-xdebug.ini
 xdebug.remote_enable=1
 xdebug.remote_handler=dbgp
@@ -66,9 +73,9 @@ DELIM
 cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
 server {
   server_name service.indholdskanalen.vm;
-  root /var/www/backend_indholdskanalen/web;
-  access_log /var/log/nginx/backend_indholdskanalen_access.log;
-  error_log /var/log/nginx/backend_indholdskanalen_error.log;
+  root /var/www/backend/web;
+  access_log /var/log/nginx/backend_access.log;
+  error_log /var/log/nginx/backend_error.log;
   location / {
     try_files \$uri @rewriteapp;
   }
@@ -88,8 +95,78 @@ server {
 }
 DELIM
 
+cat > /etc/nginx/sites-available/indholdskanalen.dk.conf <<DELIM
+upstream nodejs_app {
+  server 127.0.0.1:3000;
+}
+server {
+  listen 80;
+  root /var/www/client;
+  server_name indholdskanalen.vm;
+  access_log /var/log/nginx/client_access.log;
+  error_log /var/log/nginx/client_error.log;
+  location /proxy/ {
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+    proxy_buffering off;
+    proxy_pass http://nodejs_app/;
+    proxy_redirect off;
+  }
+  location /socket.io/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_pass http://nodejs_app;
+  }
+  location / {
+    try_files \$uri \$uri/ /index.html;
+  }
+  location ~ ^/(app|app_dev|config)\.php(/|\$) {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_split_path_info ^(.+\.php)(/.*)\$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+  }
+}
+server {
+  listen 443;
+  server_name indholdskanalen.vm;
+  root /var/www/client;
+  index index.html;
+  access_log /var/log/nginx/client_access.log;
+  error_log /var/log/nginx/client_error.log;
+  location /proxy/ {
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+    proxy_buffering off;
+    proxy_pass http://nodejs_app/;
+    proxy_redirect off;
+  }
+  location /socket.io/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_pass http://nodejs_app;
+  }
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+  ssl_session_timeout 5m;
+  ssl_protocols SSLv3 TLSv1;
+  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+  ssl_prefer_server_ciphers on;
+  location / {
+    try_files \$uri \$uri/ =404;
+  }
+}
+DELIM
+
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/indholdskanalen.dk.conf /etc/nginx/sites-enabled/indholdskanalen.dk.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -145,17 +222,65 @@ FRMjoVlMmXmMnDeGuB4l
 -----END CERTIFICATE-----
 DELIM
 
+# Config file for middleware
+cat > /var/www/middleware/config.json <<DELIM
+{
+  "sitename": "Beta test",
+  "port": 3000,
+  "ssl": {
+    "active": false,
+    "key": "/etc/ssl/nginx/server.key",
+    "cert": "/etc/ssl/nginx/server.cert",
+    "ca": false
+  },
+  "secret": "THIS IS THE SUPER SECRET KEY",
+  "debug": true,
+  "log_level": 10,
+  "maintenance": {
+    "username": "admin",
+    "password": "password"
+  },
+  "redis": {
+    "port": "6379",
+    "host": "localhost",
+    "auth": null
+  },
+  "backend": {
+    "host": "service.indholdskanalen.vm",
+    "ip": "127.0.0.1",
+    "port": "80"
+  },
+  "log": "error.log"
+}
+DELIM
+
+# Config file for client
+cat > /var/www/client/js/config.js <<DELIM
+window.config = {
+  resource: {
+    server: '//indholdskanalen.vm/',
+    uri: 'proxy'
+  },
+  ws: {
+    server: 'http://indholdskanalen.vm/'
+  },
+  cookie: {
+    secure: false
+  }
+}
+DELIM
+
 # Create database
 echo "Setting up database indholdskanalen"
 echo "create database indholdskanalen" | mysql -uroot -pvagrant
 
-# Setup backend indholdskanalen
+# Get composer
 echo "Setting up composer"
-cd /vagrant/htdocs/backend_indholdskanalen
+cd /vagrant/htdocs/backend
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
 
 # Config file for backend_indholdskanalen
-cat > /vagrant/htdocs/backend_indholdskanalen/app/config/parameters.yml <<DELIM
+cat > /vagrant/htdocs/backend/app/config/parameters.yml <<DELIM
 parameters:
   database_driver: pdo_mysql
   database_host: 127.0.0.1
@@ -194,11 +319,21 @@ sed -i 's/wheezy/lucid/g' /etc/apt/sources.list.d/chris-lea-node_js-wheezy.list
 apt-get update > /dev/null 2>&1
 apt-get install -y nodejs > /dev/null 2>&1
 
-echo "Installing middleware requirements"
-cd /vagrant/htdocs/search_node/
-npm install -g > /dev/null 2>&1
+# Search node requirements
+echo "Installing search_node requirements"
+su vagrant -c "cd /vagrant/htdocs/middleware && npm install"
 
-cat > /etc/init.d/middleware <<DELIM
+# Search node config
+cd /vagrant/htdocs/search_node/
+cp example.config.json config.json
+
+# Middleware node requirements
+echo "Installing middleware requirements"
+su vagrant -c "cd /vagrant/htdocs/middleware && npm install"
+
+# Search Node service script
+echo "Setting up search_node service"
+cat > /etc/init.d/search_node <<DELIM
 #!/bin/sh
 
 NODE_APP='app.js'
@@ -293,11 +428,19 @@ case "\$1" in
     ;;
 esac
 DELIM
-chmod +x /etc/init.d/middleware
+chmod +x /etc/init.d/search_node
+update-rc.d search_node defaults
+
+# Make middleware service
+echo "Making middleware service"
+cp /etc/init.d/search_node /etc/init.d/middleware
+sed -i 's/search_node/middleware/g' /etc/init.d/middleware
 update-rc.d middleware defaults
 
-# Start services
+# Start Node services
 echo "Starting search_node"
+service search_node start > /dev/null 2>&1
+echo "Starting middleware"
 service middleware start > /dev/null 2>&1
 
 echo "Starting php5-fpm"
