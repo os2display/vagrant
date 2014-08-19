@@ -95,7 +95,7 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/indholdskanalen.dk.conf <<DELIM
+cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
 upstream nodejs_app {
   server 127.0.0.1:3000;
 }
@@ -166,7 +166,7 @@ DELIM
 
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/indholdskanalen.dk.conf /etc/nginx/sites-enabled/indholdskanalen.dk.conf
+ln -s /etc/nginx/sites-available/indholdskanalen.vm.conf /etc/nginx/sites-enabled/indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -270,47 +270,6 @@ window.config = {
 }
 DELIM
 
-# Create database
-echo "Setting up database indholdskanalen"
-echo "create database indholdskanalen" | mysql -uroot -pvagrant
-
-# Get composer
-echo "Setting up composer"
-cd /vagrant/htdocs/backend
-curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
-
-# Config file for backend_indholdskanalen
-cat > /vagrant/htdocs/backend/app/config/parameters.yml <<DELIM
-parameters:
-  database_driver: pdo_mysql
-  database_host: 127.0.0.1
-  database_port: null
-  database_name: indholdskanalen
-  database_user: root
-  database_password: vagrant
-  mailer_transport: smtp
-  mailer_host: 127.0.0.1
-  mailer_user: null
-  mailer_password: null
-  locale: en
-  secret: ThisTokenIsNotSoSecretChangeIt
-DELIM
-
-php composer.phar install  > /dev/null 2>&1
-php app/console doctrine:schema:update --force
-
-# Setup super-user
-echo "Setting up super-user:   admin/admin"
-php app/console fos:user:create --super-admin admin test@etek.dk admin
-
-# Elastic search
-apt-get install openjdk-7-jre -y > /dev/null 2>&1
-cd /root
-wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.deb > /dev/null 2>&1
-dpkg -i elasticsearch-1.2.1.deb > /dev/null 2>&1
-rm elasticsearch-1.2.1.deb
-update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
-
 # NodeJS middleware
 echo "Installing nodejs"
 apt-get install -y python-software-properties python redis-server > /dev/null 2>&1
@@ -321,11 +280,12 @@ apt-get install -y nodejs > /dev/null 2>&1
 
 # Search node requirements
 echo "Installing search_node requirements"
-su vagrant -c "cd /vagrant/htdocs/middleware && npm install"
+su vagrant -c "cd /vagrant/htdocs/search_node && npm install"
 
 # Search node config
 cd /vagrant/htdocs/search_node/
 cp example.config.json config.json
+sed -i 's/"port": 3000/"port": 3001/g' config.json
 
 # Middleware node requirements
 echo "Installing middleware requirements"
@@ -346,7 +306,7 @@ NODE_EXEC=\`which node\`
 # chkconfig: - 58 74
 # description: node-app is the script for starting a node app on boot.
 ### BEGIN INIT INFO
-# Provides: node
+# Provides: search_node
 # Required-Start:    \$network \$remote_fs \$local_fs
 # Required-Stop:     \$network \$remote_fs \$local_fs
 # Default-Start:     2 3 4 5
@@ -429,19 +389,57 @@ case "\$1" in
 esac
 DELIM
 chmod +x /etc/init.d/search_node
-update-rc.d search_node defaults
+
+cp /etc/init.d/search_node /etc/init.d/middleware
 
 # Make middleware service
 echo "Making middleware service"
-cp /etc/init.d/search_node /etc/init.d/middleware
 sed -i 's/search_node/middleware/g' /etc/init.d/middleware
-update-rc.d middleware defaults
 
-# Start Node services
-echo "Starting search_node"
-service search_node start > /dev/null 2>&1
-echo "Starting middleware"
-service middleware start > /dev/null 2>&1
+# Update rc
+update-rc.d middleware defaults
+update-rc.d search_node defaults
+
+# Create database
+echo "Setting up database indholdskanalen"
+echo "create database indholdskanalen" | mysql -uroot -pvagrant
+
+# Get composer
+echo "Setting up composer"
+cd /vagrant/htdocs/backend
+curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
+
+# Config file for backend_indholdskanalen
+cat > /vagrant/htdocs/backend/app/config/parameters.yml <<DELIM
+parameters:
+  database_driver: pdo_mysql
+  database_host: 127.0.0.1
+  database_port: null
+  database_name: indholdskanalen
+  database_user: root
+  database_password: vagrant
+  mailer_transport: smtp
+  mailer_host: 127.0.0.1
+  mailer_user: null
+  mailer_password: null
+  locale: en
+  secret: ThisTokenIsNotSoSecretChangeIt
+DELIM
+
+php composer.phar install  > /dev/null 2>&1
+php app/console doctrine:schema:update --force
+
+# Setup super-user
+echo "Setting up super-user:   admin/admin"
+php app/console fos:user:create --super-admin admin test@etek.dk admin
+
+# Elastic search
+apt-get install openjdk-7-jre -y > /dev/null 2>&1
+cd /root
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.2.1.deb > /dev/null 2>&1
+rm elasticsearch-1.2.1.deb
+update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
@@ -453,6 +451,15 @@ echo "Starting mysql"
 service mysql start > /dev/null 2>&1
 
 echo "Starting ElasticSearch"
-service elasticsearch restart
+service elasticsearch restart > /dev/null 2>&1
+
+echo "Starting redis"
+service redis-server restart > /dev/null 2>&1
+
+echo "Starting search_node"
+service search_node start > /dev/null 2>&1
+
+echo "Starting middleware"
+service middleware start > /dev/null 2>&1
 
 echo "Done"
