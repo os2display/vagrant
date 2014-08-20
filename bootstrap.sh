@@ -433,6 +433,10 @@ php app/console doctrine:schema:update --force
 echo "Setting up super-user:   admin/admin"
 php app/console fos:user:create --super-admin admin test@etek.dk admin
 
+# Fix /etc/hosts
+echo "Add service.indholdskanalen.vm to hosts"
+echo "127.0.1.1 service.indholdskanalen.vm" >> /etc/hosts
+
 # Elastic search
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
