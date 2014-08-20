@@ -445,6 +445,10 @@ dpkg -i elasticsearch-1.2.1.deb > /dev/null 2>&1
 rm elasticsearch-1.2.1.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
+# Elasticsearch plugins
+/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest
+/usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head
+
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
 
