@@ -280,7 +280,7 @@ apt-get install -y nodejs > /dev/null 2>&1
 
 # Search node requirements
 echo "Installing search_node requirements"
-su vagrant -c "cd /vagrant/htdocs/search_node && npm install"
+su vagrant -c "cd /vagrant/htdocs/search_node && npm install" > /dev/null 2>&1
 
 # Search node config
 cd /vagrant/htdocs/search_node/
@@ -289,7 +289,7 @@ sed -i 's/"port": 3000/"port": 3001/g' config.json
 
 # Middleware node requirements
 echo "Installing middleware requirements"
-su vagrant -c "cd /vagrant/htdocs/middleware && npm install"
+su vagrant -c "cd /vagrant/htdocs/middleware && npm install" > /dev/null 2>&1
 
 # Search Node service script
 echo "Setting up search_node service"
@@ -397,12 +397,12 @@ echo "Making middleware service"
 sed -i 's/search_node/middleware/g' /etc/init.d/middleware
 
 # Update rc
-update-rc.d middleware defaults
-update-rc.d search_node defaults
+update-rc.d middleware defaults > /dev/null 2>&1
+update-rc.d search_node defaults > /dev/null 2>&1
 
 # Create database
 echo "Setting up database indholdskanalen"
-echo "create database indholdskanalen" | mysql -uroot -pvagrant
+echo "create database indholdskanalen" | mysql -uroot -pvagrant > /dev/null 2>&1
 
 # Get composer
 echo "Setting up composer"
@@ -427,11 +427,11 @@ parameters:
 DELIM
 
 php composer.phar install  > /dev/null 2>&1
-php app/console doctrine:schema:update --force
+php app/console doctrine:schema:update --force > /dev/null 2>&1
 
 # Setup super-user
 echo "Setting up super-user:   admin/admin"
-php app/console fos:user:create --super-admin admin test@etek.dk admin
+php app/console fos:user:create --super-admin admin test@etek.dk admin > /dev/null 2>&1
 
 # Fix /etc/hosts
 echo "Add service.indholdskanalen.vm to hosts"
@@ -446,8 +446,8 @@ rm elasticsearch-1.2.1.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
-/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest
-/usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head
+/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest > /dev/null 2>&1
+/usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
 
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
