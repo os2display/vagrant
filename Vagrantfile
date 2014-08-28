@@ -1,8 +1,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "umtj/debian-7"
-  config.vm.box_url = "http://gambit.etek.dk/vagrant/debian-7.box"
+  config.vm.box = "chef/debian-7.6"
 
   # IP
   config.vm.network "private_network", ip: "192.168.50.18"

@@ -4,6 +4,31 @@
 echo "Updating APT"
 apt-get update > /dev/null 2>&1
 
+
+# Set timezone.                                                                                                                                                                      
+echo "Setting up timezone..."                                                                                                                                                        
+echo "Europe/Copenhagen" > /etc/timezone                                                                                                                                             
+/usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata > /dev/null 2>&1                                                                                                         
+                                                                                                                                                                                     
+# Set locale                                                                                                                                                                         
+echo "Setting up locale..."                                                                                                                                                          
+echo en_GB.UTF-8 UTF-8 > /etc/locale.gen                                                                                                                                             
+echo en_DK.UTF-8 UTF-8 >> /etc/locale.gen                                                                                                                                            
+echo da_DK.UTF-8 UTF-8 >> /etc/locale.gen                                                                                                                                            
+/usr/sbin/locale-gen > /dev/null 2>&1                                                                                                                                                
+export LANGUAGE=en_DK.UTF-8 > /dev/null 2>&1                                                                                                                                         
+export LC_ALL=en_DK.UTF-8 > /dev/null 2>&1                                                                                                                                           
+/usr/sbin/dpkg-reconfigure --frontend noninteractive locales > /dev/null 2>&1 
+
+# Add dotdeb
+cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
+deb http://packages.dotdeb.org wheezy all
+deb-src http://packages.dotdeb.org wheezy all
+DELIM
+wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
+sudo apt-key add dotdeb.gpg  > /dev/null 2>&1
+rm dotdeb.gpg
+
 # Mysql
 echo "Configuring mysql"
 debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password vagrant' > /dev/null 2>&1
