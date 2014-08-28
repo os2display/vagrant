@@ -5,20 +5,20 @@ echo "Updating APT"
 apt-get update > /dev/null 2>&1
 
 
-# Set timezone.                                                                                                                                                                      
-echo "Setting up timezone..."                                                                                                                                                        
-echo "Europe/Copenhagen" > /etc/timezone                                                                                                                                             
-/usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata > /dev/null 2>&1                                                                                                         
-                                                                                                                                                                                     
-# Set locale                                                                                                                                                                         
-echo "Setting up locale..."                                                                                                                                                          
-echo en_GB.UTF-8 UTF-8 > /etc/locale.gen                                                                                                                                             
-echo en_DK.UTF-8 UTF-8 >> /etc/locale.gen                                                                                                                                            
-echo da_DK.UTF-8 UTF-8 >> /etc/locale.gen                                                                                                                                            
-/usr/sbin/locale-gen > /dev/null 2>&1                                                                                                                                                
-export LANGUAGE=en_DK.UTF-8 > /dev/null 2>&1                                                                                                                                         
-export LC_ALL=en_DK.UTF-8 > /dev/null 2>&1                                                                                                                                           
-/usr/sbin/dpkg-reconfigure --frontend noninteractive locales > /dev/null 2>&1 
+# Set timezone.
+echo "Setting up timezone..."
+echo "Europe/Copenhagen" > /etc/timezone
+/usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata > /dev/null 2>&1
+
+# Set locale
+echo "Setting up locale..."
+echo en_GB.UTF-8 UTF-8 > /etc/locale.gen
+echo en_DK.UTF-8 UTF-8 >> /etc/locale.gen
+echo da_DK.UTF-8 UTF-8 >> /etc/locale.gen
+/usr/sbin/locale-gen > /dev/null 2>&1
+export LANGUAGE=en_DK.UTF-8 > /dev/null 2>&1
+export LC_ALL=en_DK.UTF-8 > /dev/null 2>&1
+/usr/sbin/dpkg-reconfigure --frontend noninteractive locales > /dev/null 2>&1
 
 # Add dotdeb
 cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
@@ -265,7 +265,7 @@ cat > /var/www/middleware/config.json <<DELIM
     "username": "admin",
     "password": "password"
   },
-  "redis": {
+  "cache": {
     "port": "6379",
     "host": "localhost",
     "auth": null
