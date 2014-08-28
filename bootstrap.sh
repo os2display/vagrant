@@ -124,12 +124,16 @@ cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
 upstream nodejs_app {
   server 127.0.0.1:3000;
 }
+
 server {
   listen 80;
   root /var/www/client;
+
   server_name indholdskanalen.vm;
+
   access_log /var/log/nginx/client_access.log;
   error_log /var/log/nginx/client_error.log;
+
   location /proxy/ {
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -138,55 +142,19 @@ server {
     proxy_pass http://nodejs_app/;
     proxy_redirect off;
   }
+
   location /socket.io/ {
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_pass http://nodejs_app;
   }
+
   location / {
     try_files \$uri \$uri/ /index.html;
   }
-  location ~ ^/(app|app_dev|config)\.php(/|\$) {
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
-    fastcgi_split_path_info ^(.+\.php)(/.*)\$;
-    include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-    fastcgi_param HTTPS off;
-  }
 }
-server {
-  listen 443;
-  server_name indholdskanalen.vm;
-  root /var/www/client;
-  index index.html;
-  access_log /var/log/nginx/client_access.log;
-  error_log /var/log/nginx/client_error.log;
-  location /proxy/ {
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header Host \$http_host;
-    proxy_buffering off;
-    proxy_pass http://nodejs_app/;
-    proxy_redirect off;
-  }
-  location /socket.io/ {
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_pass http://nodejs_app;
-  }
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/server.cert;
-  ssl_certificate_key /etc/ssl/nginx/server.key;
-  ssl_session_timeout 5m;
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
-  location / {
-    try_files \$uri \$uri/ =404;
-  }
-}
+
 DELIM
 
 # Symlink
