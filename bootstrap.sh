@@ -26,8 +26,9 @@ deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
 DELIM
 wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
-sudo apt-key add dotdeb.gpg  > /dev/null 2>&1
+apt-key add dotdeb.gpg  > /dev/null 2>&1
 rm dotdeb.gpg
+apt-get update > /dev/null 2>&1
 
 # Mysql
 echo "Configuring mysql"
@@ -49,14 +50,6 @@ sed -i '/post_max_size = 8M/cpost_max_size = 256M' /etc/php5/fpm/php.ini
 sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.mode = 0660/c listen.mode = 0660' /etc/php5/fpm/pool.d/www.conf
-
-# Nginx
-echo "Installing nginx"
-apt-get install -y nginx > /dev/null 2>&1
-unlink /etc/nginx/sites-enabled/default
-
-# Setup web root
-ln -s /vagrant/htdocs /var/www
 
 # Redis
 echo "Installing redis"
@@ -94,19 +87,54 @@ xdebug.remote_port=9000
 xdebug.remote_autostart=0
 DELIM
 
+# Nginx
+echo "Installing nginx"
+apt-get install -y nginx > /dev/null 2>&1
+unlink /etc/nginx/sites-enabled/default
+
+# Setup web root
+ln -s /vagrant/htdocs /var/www
+
 # Config files into nginx
 cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
+upstream nodejs_search {
+  server 127.0.0.1:3010;
+}
+
 server {
+  listen 80;
+
   server_name service.indholdskanalen.vm;
   root /var/www/backend/web;
+
+  rewrite ^ https://\$server_name\$request_uri? permanent;
+
   access_log /var/log/nginx/backend_access.log;
   error_log /var/log/nginx/backend_error.log;
+}
+
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name service.indholdskanalen.vm;
+  root /var/www/backend/web;
+
+  access_log /var/log/nginx/backend_access.log;
+  error_log /var/log/nginx/backend_error.log;
+
   location / {
+    # try to serve file directly, fallback to rewrite
     try_files \$uri @rewriteapp;
   }
+
   location @rewriteapp {
+    # rewrite all to app.php
     rewrite ^(.*)\$ /app_dev.php/\$1 last;
   }
+
   location ~ ^/(app|app_dev|config)\.php(/|\$) {
     fastcgi_pass unix:/var/run/php5-fpm.sock;
     fastcgi_split_path_info ^(.+\.php)(/.*)\$;
@@ -114,15 +142,47 @@ server {
     fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
     fastcgi_param HTTPS off;
   }
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
   location ~ /\.ht {
     deny all;
   }
+
+  location /proxy/ {
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+
+    proxy_buffering off;
+
+    proxy_pass http://nodejs_search/;
+    proxy_redirect off;
+  }
+
+  location /socket.io/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://nodejs_search;
+  }
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+
+  ssl_session_timeout 5m;
+
+  ssl_protocols SSLv3 TLSv1;
+  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+  ssl_prefer_server_ciphers on;
 }
 DELIM
 
 cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
 upstream nodejs_app {
-  server 127.0.0.1:3000;
+  server 127.0.0.1:3020;
 }
 
 server {
@@ -219,7 +279,7 @@ DELIM
 cat > /var/www/middleware/config.json <<DELIM
 {
   "sitename": "Beta test",
-  "port": 3000,
+  "port": 3020,
   "ssl": {
     "active": false,
     "key": "/etc/ssl/nginx/server.key",
@@ -278,7 +338,7 @@ su vagrant -c "cd /vagrant/htdocs/search_node && npm install" > /dev/null 2>&1
 # Search node config
 cd /vagrant/htdocs/search_node/
 cp example.config.json config.json
-sed -i 's/"port": 3000/"port": 3001/g' config.json
+sed -i 's/"port": 3000/"port": 3010/g' config.json
 
 # Middleware node requirements
 echo "Installing middleware requirements"
@@ -397,6 +457,9 @@ update-rc.d search_node defaults > /dev/null 2>&1
 echo "Setting up database indholdskanalen"
 echo "create database indholdskanalen" | mysql -uroot -pvagrant > /dev/null 2>&1
 
+# Copy Angular config file.
+cp /vagrant/htdocs/backend/web/js/example.configuration.js /vagrant/htdocs/backend/web/js/configuration.js
+
 # Get composer
 echo "Setting up composer"
 cd /vagrant/htdocs/backend
@@ -411,12 +474,25 @@ parameters:
   database_name: indholdskanalen
   database_user: root
   database_password: vagrant
+
   mailer_transport: smtp
   mailer_host: 127.0.0.1
   mailer_user: null
   mailer_password: null
+
   locale: en
   secret: ThisTokenIsNotSoSecretChangeIt
+
+  debug_toolbar:          true
+  debug_redirects:        false
+  use_assetic_controller: true
+
+  middleware_host: http://127.0.0.1:3020
+  absolute_path_to_server: http://service.indholdskanalen.vm
+
+  search_host: http://127.0.0.1:3010
+  search_path: /api
+  search_customer_id: e7df7cd2ca07f4f1ab415d457a6e1c13
 DELIM
 
 php composer.phar install  > /dev/null 2>&1
