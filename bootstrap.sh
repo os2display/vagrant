@@ -495,14 +495,6 @@ parameters:
   search_customer_id: e7df7cd2ca07f4f1ab415d457a6e1c13
 DELIM
 
-cat > /vagrant/htdocs/backend/web/js/configuration.js <<DELIM
-ikApp.value('configuration', {
-  search: {
-    address: 'http://service.indholdskanalen.vm:3001'
-  }
-});
-DELIM
-
 php composer.phar install  > /dev/null 2>&1
 php app/console doctrine:schema:update --force > /dev/null 2>&1
 
