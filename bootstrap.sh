@@ -181,25 +181,46 @@ server {
 DELIM
 
 cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
-upstream nodejs_app {
+upstream nodejs_middleware {
   server 127.0.0.1:3020;
 }
 
 server {
   listen 80;
-  root /var/www/client;
 
   server_name indholdskanalen.vm;
+  root /var/www/client;
+
+  rewrite ^ https://\$server_name\$request_uri? permanent;
 
   access_log /var/log/nginx/client_access.log;
   error_log /var/log/nginx/client_error.log;
+}
+
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name indholdskanalen.vm;
+  root /var/www/client;
+
+  access_log /var/log/nginx/client_access.log;
+  error_log /var/log/nginx/client_error.log;
+
+  location / {
+    try_files \$uri \$uri/ /index.html;
+  }
 
   location /proxy/ {
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header Host \$http_host;
+
     proxy_buffering off;
-    proxy_pass http://nodejs_app/;
+
+    proxy_pass http://nodejs_middleware/;
     proxy_redirect off;
   }
 
@@ -207,14 +228,20 @@ server {
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
-    proxy_pass http://nodejs_app;
+
+    proxy_pass http://nodejs_middleware;
   }
 
-  location / {
-    try_files \$uri \$uri/ /index.html;
-  }
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+
+  ssl_session_timeout 5m;
+
+  ssl_protocols SSLv3 TLSv1;
+  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+  ssl_prefer_server_ciphers on;
 }
-
 DELIM
 
 # Symlink
@@ -301,7 +328,7 @@ cat > /var/www/middleware/config.json <<DELIM
   "backend": {
     "host": "service.indholdskanalen.vm",
     "ip": "127.0.0.1",
-    "port": "80"
+    "port": "443"
   },
   "log": "error.log"
 }
@@ -315,7 +342,7 @@ window.config = {
     uri: 'proxy'
   },
   ws: {
-    server: 'http://indholdskanalen.vm/'
+    server: 'https$://indholdskanalen.vm/'
   },
   cookie: {
     secure: false
