@@ -342,7 +342,7 @@ window.config = {
     uri: 'proxy'
   },
   ws: {
-    server: 'https$://indholdskanalen.vm/'
+    server: 'https://indholdskanalen.vm/'
   },
   cookie: {
     secure: false
