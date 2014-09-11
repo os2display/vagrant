@@ -344,6 +344,9 @@ window.config = {
   ws: {
     server: 'https://indholdskanalen.vm/'
   },
+  backend: {
+    address: 'https://service.indholdskanalen.vm/'
+  },
   cookie: {
     secure: false
   }
