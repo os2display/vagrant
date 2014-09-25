@@ -530,7 +530,7 @@ parameters:
   use_assetic_controller: true
 
   middleware_host: http://127.0.0.1:3020
-  absolute_path_to_server: http://service.indholdskanalen.vm
+  absolute_path_to_server: https://service.indholdskanalen.vm
 
   search_host: http://127.0.0.1:3010
   search_path: /api
