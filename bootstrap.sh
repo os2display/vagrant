@@ -551,12 +551,13 @@ echo "127.0.1.1 service.indholdskanalen.vm" >> /etc/hosts
 # Elastic search
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
-wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.deb > /dev/null 2>&1
-dpkg -i elasticsearch-1.2.1.deb > /dev/null 2>&1
-rm elasticsearch-1.2.1.deb
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.4.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.3.4.deb > /dev/null 2>&1
+rm elasticsearch-1.3.4.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
+/usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.3.0 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
 
 echo "Starting php5-fpm"
