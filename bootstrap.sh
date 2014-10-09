@@ -535,6 +535,8 @@ parameters:
   search_host: http://127.0.0.1:3010
   search_path: /api
   search_customer_id: e7df7cd2ca07f4f1ab415d457a6e1c13
+
+  zencoder_api: 1234567890
 DELIM
 
 php composer.phar install  > /dev/null 2>&1
