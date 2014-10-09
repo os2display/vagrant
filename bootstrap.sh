@@ -375,7 +375,14 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
   "mappings": {
     "e7df7cd2ca07f4f1ab415d457a6e1c13": {
       "name": "Indholdskanalen",
-      "raws": [ "title" ],
+      "fields": [
+        {
+          "field": "title",
+          "type": "string",
+          "default_analyzer": "string_index",
+          "sort": true
+        }
+      ],
       "dates": [ "created_at", "updated_at" ]
     }
   }
