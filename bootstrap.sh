@@ -379,6 +379,8 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         {
           "field": "title",
           "type": "string",
+          "language": "da",
+          "country": "DK",
           "default_analyzer": "string_index",
           "sort": true
         }
