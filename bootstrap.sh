@@ -4,7 +4,6 @@
 echo "Updating APT"
 apt-get update > /dev/null 2>&1
 
-
 # Set timezone.
 echo "Setting up timezone..."
 echo "Europe/Copenhagen" > /etc/timezone
@@ -45,7 +44,7 @@ sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/cli/php
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/fpm/php.ini
 
 sed -i '/upload_max_filesize = 2M/cupload_max_filesize = 256M' /etc/php5/fpm/php.ini
-sed -i '/post_max_size = 8M/cpost_max_size = 256M' /etc/php5/fpm/php.ini
+sed -i '/post_max_size = 8M/cpost_max_size = 300M' /etc/php5/fpm/php.ini
 
 sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
@@ -124,6 +123,8 @@ server {
 
   server_name service.indholdskanalen.vm;
   root /var/www/backend/web;
+
+  client_max_body_size 300m;
 
   access_log /var/log/nginx/backend_access.log;
   error_log /var/log/nginx/backend_error.log;
@@ -209,6 +210,8 @@ server {
   server_name indholdskanalen.vm;
   root /var/www/client;
 
+  client_max_body_size 300m;
+
   access_log /var/log/nginx/client_access.log;
   error_log /var/log/nginx/client_error.log;
 
@@ -246,13 +249,6 @@ server {
   ssl_prefer_server_ciphers on;
 }
 DELIM
-
-# Increase file size and add mime types to nginx
-echo "Increasing upload file size to 100mb and adding mime types to nginx"
-sed -i '/include \/etc/'/include \/etc\/nginx\/mime.types;/a client_max_body_size 100M;' /etc/nginx/nginx.conf'
-sed -i '/include \/etc\/nginx\/mime.types;/a }' /etc/nginx/nginx.conf
-sed -i '/include \/etc\/nginx\/mime.types;/a video/ogg ogg;' /etc/nginx/nginx.conf
-sed -i '/include \/etc\/nginx\/mime.types;/a types {' /etc/nginx/nginx.conf
 
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
