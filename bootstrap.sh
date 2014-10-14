@@ -368,25 +368,22 @@ su vagrant -c "cd /vagrant/htdocs/search_node && npm install" > /dev/null 2>&1
 # Search node config
 cd /vagrant/htdocs/search_node/
 cp example.config.json config.json
-sed -i 's/"port": 3000/"port": 3010/g' config.json
 
 cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
 {
-  "mappings": {
-    "e7df7cd2ca07f4f1ab415d457a6e1c13": {
-      "name": "Indholdskanalen",
-      "fields": [
-        {
-          "field": "title",
-          "type": "string",
-          "language": "da",
-          "country": "DK",
-          "default_analyzer": "string_index",
-          "sort": true
-        }
-      ],
-      "dates": [ "created_at", "updated_at" ]
-    }
+  "e7df7cd2ca07f4f1ab415d457a6e1c13": {
+    "name": "Indholdskanalen",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "sort": true
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
   }
 }
 DELIM
