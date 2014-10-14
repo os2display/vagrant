@@ -51,6 +51,9 @@ sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d
 sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
 sed -i '/;listen.mode = 0660/c listen.mode = 0660' /etc/php5/fpm/pool.d/www.conf
 
+# Set php memory limit to 256mb
+sed -i '/memory_limit = 128M/c memory_limit = 256M' /etc/php5/fpm/php.ini
+
 # Redis
 echo "Installing redis"
 apt-get install -y redis-server > /dev/null 2>&1
@@ -243,6 +246,13 @@ server {
   ssl_prefer_server_ciphers on;
 }
 DELIM
+
+# Increase file size and add mime types to nginx
+echo "Increasing upload file size to 100mb and adding mime types to nginx"
+sed -i '/include \/etc/'/include \/etc\/nginx\/mime.types;/a client_max_body_size 100M;' /etc/nginx/nginx.conf'
+sed -i '/include \/etc\/nginx\/mime.types;/a }' /etc/nginx/nginx.conf
+sed -i '/include \/etc\/nginx\/mime.types;/a video/ogg ogg;' /etc/nginx/nginx.conf
+sed -i '/include \/etc\/nginx\/mime.types;/a types {' /etc/nginx/nginx.conf
 
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
