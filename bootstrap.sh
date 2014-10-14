@@ -244,6 +244,11 @@ server {
 }
 DELIM
 
+# Insert mime types
+sed -i '/include \/etc\/nginx\/mime.types;/a }' /etc/nginx/nginx.conf
+sed -i '/include \/etc\/nginx\/mime.types;/a video/ogg ogg;' /etc/nginx/nginx.conf
+sed -i '/include \/etc\/nginx\/mime.types;/a types {' /etc/nginx/nginx.conf
+
 # Symlink
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/indholdskanalen.vm.conf /etc/nginx/sites-enabled/indholdskanalen.vm.conf
