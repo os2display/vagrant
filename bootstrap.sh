@@ -369,7 +369,7 @@ apt-get install -y nodejs > /dev/null 2>&1
 
 # Search node requirements
 echo "Installing search_node requirements"
-su vagrant -c "cd /vagrant/htdocs/search_node && npm install" > /dev/null 2>&1
+su vagrant -c "cd /vagrant/htdocs/search_node && ./install.sh" > /dev/null 2>&1
 
 # Search node config
 cd /vagrant/htdocs/search_node/
