@@ -394,6 +394,34 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
       }
     ],
     "dates": [ "created_at", "updated_at" ]
+  },
+  "itkDevShare": {
+    "name": "ITK Dev Share",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "sort": true
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
+  },
+  "bibShare": {
+    "name": "Biblioteks Share",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "sort": true
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
   }
 }
 DELIM
