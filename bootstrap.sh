@@ -565,6 +565,8 @@ parameters:
   mailer_host: 127.0.0.1
   mailer_user: null
   mailer_password: null
+  mailer_from_email: webmaster@ik3.indholdskanalen.vm
+  mailer_from_name: Webmaster Indholdskanalen
 
   locale: en
   secret: ThisTokenIsNotSoSecretChangeIt
