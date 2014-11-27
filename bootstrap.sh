@@ -395,7 +395,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
     ],
     "dates": [ "created_at", "updated_at" ]
   },
-  "itkDevShare": {
+  "itkdevshare": {
     "name": "ITK Dev Share",
     "fields": [
       {
@@ -409,7 +409,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
     ],
     "dates": [ "created_at", "updated_at" ]
   },
-  "bibShare": {
+  "bibshare": {
     "name": "Biblioteks Share",
     "fields": [
       {
