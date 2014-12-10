@@ -383,6 +383,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
 {
   "e7df7cd2ca07f4f1ab415d457a6e1c13": {
     "name": "Indholdskanalen",
+    "tag": 'private',
     "fields": [
       {
         "field": "title",
@@ -397,6 +398,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
   },
   "itkdevshare": {
     "name": "ITK Dev Share",
+    "tag": 'shared',
     "fields": [
       {
         "field": "title",
@@ -411,6 +413,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
   },
   "bibshare": {
     "name": "Biblioteks Share",
+    "tag": 'shared',
     "fields": [
       {
         "field": "title",
