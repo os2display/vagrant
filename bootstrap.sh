@@ -391,7 +391,8 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
-        "sort": true
+        "sort": true,
+        "indexable": true
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -406,7 +407,13 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
-        "sort": true
+        "sort": true,
+        "indexable": true
+      },
+      {
+        "field": "slides",
+        "indexable": false,
+        "type": "object"
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -421,7 +428,13 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
-        "sort": true
+        "sort": true,
+        "indexable": true
+      },
+      {
+        "field": "slides",
+        "indexable": false,
+        "type": "object"
       }
     ],
     "dates": [ "created_at", "updated_at" ]
