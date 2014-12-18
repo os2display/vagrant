@@ -425,7 +425,7 @@ FRMjoVlMmXmMnDeGuB4l
 DELIM
 
 # Config file for middleware
-cat > /var/www/middleware/config.json <<DELIM
+cat > /vagrant/htdocs/middleware/config.json <<DELIM
 {
   "port": 3020,
   "secret": "MySuperSecret",
@@ -448,29 +448,18 @@ cat > /var/www/middleware/config.json <<DELIM
 DELIM
 
 # Config file for apikeys
-cat > /var/www/middleware/apikeys.json <<DELIM
+cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
 {
-  "795359dd2c81fa41af67faa2f9adbd32": {
+  "059d9d9c50e0c45b529407b183b6a02f": {
     "name": "IK3",
-    "expire": 300,
-    "indexes": [
-      "e7df7cd2ca07f4f1ab415d457a6e1c13",
-      "de831b7bf75d90f6641b4918dde0ddba"
-    ]
-  },
-  "88cfd4b277f3f8b6c7c15d7a84784067": {
-    "name": "Share",
-    "expire": 300,
-    "indexes": [
-      "itkdevshare",
-      "bibshare"
-    ]
+    "backend": "https://service.indholdskanalen.vm",
+    "expire": "300"
   }
 }
 DELIM
 
 # Config file for client
-cat > /var/www/client/js/config.js <<DELIM
+cat > /vagrant/htdocs/client/js/config.js <<DELIM
 window.config = {
   resource: {
     server: '//indholdskanalen.vm/',
@@ -563,6 +552,28 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
       }
     ],
     "dates": [ "created_at", "updated_at" ]
+  }
+}
+DELIM
+
+# Config file for apikeys
+cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
+{
+  "795359dd2c81fa41af67faa2f9adbd32": {
+    "name": "IK3",
+    "expire": 300,
+    "indexes": [
+      "e7df7cd2ca07f4f1ab415d457a6e1c13",
+      "de831b7bf75d90f6641b4918dde0ddba"
+    ]
+  },
+  "88cfd4b277f3f8b6c7c15d7a84784067": {
+    "name": "Share",
+    "expire": 300,
+    "indexes": [
+      "itkdevshare",
+      "bibshare"
+    ]
   }
 }
 DELIM
