@@ -450,10 +450,21 @@ DELIM
 # Config file for apikeys
 cat > /var/www/middleware/apikeys.json <<DELIM
 {
-  "059d9d9c50e0c45b529407b183b6a02f": {
-    "name": "Indholdskanalen v3",
-    "backend": "https://service.indholdskanalen.vm",
-    "expire": "300"
+  "795359dd2c81fa41af67faa2f9adbd32": {
+    "name": "IK3",
+    "expire": 300,
+    "indexes": [
+      "e7df7cd2ca07f4f1ab415d457a6e1c13",
+      "de831b7bf75d90f6641b4918dde0ddba"
+    ]
+  },
+  "88cfd4b277f3f8b6c7c15d7a84784067": {
+    "name": "Share",
+    "expire": 300,
+    "indexes": [
+      "itkdevshare",
+      "bibshare"
+    ]
   }
 }
 DELIM
@@ -706,7 +717,7 @@ parameters:
 
     sharing_host: https://search.indholdskanalen.vm
     sharing_path: /api
-    sharing_apikey: 795359dd2c81fa41af67faa2f9adbd32
+    sharing_apikey: 88cfd4b277f3f8b6c7c15d7a84784067
 
     search_host: https://search.indholdskanalen.vm
     search_path: /api
