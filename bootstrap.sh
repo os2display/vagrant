@@ -497,7 +497,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
 {
   "e7df7cd2ca07f4f1ab415d457a6e1c13": {
     "name": "Indholdskanalen",
-    "tag": 'private',
+    "tag": "private",
     "fields": [
       {
         "field": "title",
@@ -513,7 +513,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
   },
   "itkdevshare": {
     "name": "ITK Dev Share",
-    "tag": 'shared',
+    "tag": "shared",
     "fields": [
       {
         "field": "title",
@@ -534,7 +534,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
   },
   "bibshare": {
     "name": "Biblioteks Share",
-    "tag": 'shared',
+    "tag": "shared",
     "fields": [
       {
         "field": "title",
@@ -730,6 +730,7 @@ echo "Add service.indholdskanalen.vm to hosts"
 echo "127.0.1.1 service.indholdskanalen.vm" >> /etc/hosts
 
 # Elastic search
+echo "Installing elasticsearch"
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
 wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.4.deb > /dev/null 2>&1
