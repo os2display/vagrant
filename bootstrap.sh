@@ -750,6 +750,8 @@ php app/console fos:user:create --super-admin admin test@etek.dk admin > /dev/nu
 # Fix /etc/hosts
 echo "Add service.indholdskanalen.vm to hosts"
 echo "127.0.1.1 service.indholdskanalen.vm" >> /etc/hosts
+echo "127.0.1.1 search.indholdskanalen.vm" >> /etc/hosts
+echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
 
 # Elastic search
 echo "Installing elasticsearch"
