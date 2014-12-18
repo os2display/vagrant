@@ -339,7 +339,7 @@ server {
 
     proxy_buffering off;
 
-    proxy_pass http://nodejs_search/;
+    proxy_pass http://nodejs_middleware/;
     proxy_redirect off;
   }
 
@@ -348,7 +348,7 @@ server {
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
 
-    proxy_pass http://nodejs_search;
+    proxy_pass http://nodejs_middleware;
   }
 
   ssl on;
