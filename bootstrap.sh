@@ -99,10 +99,6 @@ ln -s /vagrant/htdocs /var/www
 
 # Config files into nginx
 cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
-upstream nodejs_search {
-  server 127.0.0.1:3010;
-}
-
 server {
   listen 80;
 
@@ -182,17 +178,14 @@ server {
 
   ssl_session_timeout 5m;
 
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
 }
 DELIM
 
 cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
-upstream nodejs_middleware {
-  server 127.0.0.1:3020;
-}
-
 server {
   listen 80;
 
@@ -248,13 +241,130 @@ server {
 
   ssl_session_timeout 5m;
 
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+}
+DELIM
+
+cat > /etc/nginx/sites-available/search.indholdskanalen.vm.conf <<DELIM
+upstream nodejs_search {
+  server 127.0.0.1:3010;
+}
+
+server {
+  listen 80;
+
+  server_name search.indholdskanalen.vm;
+  rewrite ^ https://$server_name$request_uri? permanent;
+
+  access_log /var/log/nginx/search_access.log;
+  error_log /var/log/nginx/search_error.log;
+}
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name search.indholdskanalen.vm;;
+
+  access_log /var/log/nginx/search_access.log;
+  error_log /var/log/nginx/search_error.log;
+
+  location / {
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+
+    proxy_buffering off;
+
+    proxy_pass http://nodejs_search/;
+    proxy_redirect off;
+  }
+
+  location /socket.io/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://nodejs_search;
+  }
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+
+  ssl_session_timeout 5m;
+
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+}
+DELIM
+
+cat > /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf <<DELIM
+upstream nodejs_middleware {
+  server 127.0.0.1:3020;
+}
+
+server {
+  listen 80;
+
+  server_name middleware.indholdskanalen.vm;
+  rewrite ^ https://$server_name$request_uri? permanent;
+
+  access_log /var/log/nginx/search_access.log;
+  error_log /var/log/nginx/search_error.log;
+}
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name middleware.indholdskanalen.vm;;
+
+  access_log /var/log/nginx/search_access.log;
+  error_log /var/log/nginx/search_error.log;
+
+  location / {
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+
+    proxy_buffering off;
+
+    proxy_pass http://nodejs_search/;
+    proxy_redirect off;
+  }
+
+  location /socket.io/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://nodejs_search;
+  }
+
+  ssl on;
+  ssl_certificate /etc/ssl/certs2014/indholdskanalen_dk.crt;
+  ssl_certificate_key /etc/ssl/certs2014/indholdskanalen_dk.key;
+
+  ssl_session_timeout 5m;
+
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
 }
 DELIM
 
 # Symlink
+ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites-enabled/search.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/indholdskanalen.vm.conf /etc/nginx/sites-enabled/indholdskanalen.vm.conf
 
@@ -315,32 +425,34 @@ DELIM
 # Config file for middleware
 cat > /var/www/middleware/config.json <<DELIM
 {
-  "sitename": "Beta test",
   "port": 3020,
-  "ssl": {
-    "active": false,
-    "key": "/etc/ssl/nginx/server.key",
-    "cert": "/etc/ssl/nginx/server.cert",
-    "ca": false
+  "secret": "MySuperSecret",
+  "log": {
+    "file": "messages.log",
+    "debug": false
   },
-  "secret": "THIS IS THE SUPER SECRET KEY",
-  "debug": true,
-  "log_level": 10,
-  "maintenance": {
+  "admin": {
     "username": "admin",
-    "password": "password"
+    "password": "admin"
   },
   "cache": {
     "port": "6379",
     "host": "localhost",
-    "auth": null
+    "auth": null,
+    "db": 0
   },
-  "backend": {
-    "host": "service.indholdskanalen.vm",
-    "ip": "127.0.0.1",
-    "port": "443"
-  },
-  "log": "error.log"
+  "apikeys": "apikeys.json"
+}
+DELIM
+
+# Config file for apikeys
+cat > /var/www/middleware/apikeys.json <<DELIM
+{
+  "059d9d9c50e0c45b529407b183b6a02f": {
+    "name": "Indholdskanalen v3",
+    "backend": "https://service.indholdskanalen.vm",
+    "expire": "300"
+  }
 }
 DELIM
 
@@ -545,10 +657,9 @@ esac
 DELIM
 chmod +x /etc/init.d/search_node
 
-cp /etc/init.d/search_node /etc/init.d/middleware
-
 # Make middleware service
 echo "Making middleware service"
+cp /etc/init.d/search_node /etc/init.d/middleware
 sed -i 's/search_node/middleware/g' /etc/init.d/middleware
 
 # Update rc
@@ -570,42 +681,46 @@ curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
 # Config file for backend_indholdskanalen
 cat > /vagrant/htdocs/backend/app/config/parameters.yml <<DELIM
 parameters:
-  database_driver: pdo_mysql
-  database_host: 127.0.0.1
-  database_port: null
-  database_name: indholdskanalen
-  database_user: root
-  database_password: vagrant
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: indholdskanalen
+    database_user: root
+    database_password: vagrant
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: en
+    secret: ThisTokenIsNotSoSecretChangeIt
+    debug_toolbar: true
+    debug_redirects: false
+    use_assetic_controller: true
+    absolute_path_to_server: 'https://service.indholdskanalen.vm'
+    zencoder_api: 1234567890
+    mailer_from_email: webmaster@ik3.indholdskanalen.dk
+    mailer_from_name: Webmaster Indholdskanalen
+    templates_directory: ik-templates/
 
-  mailer_transport: smtp
-  mailer_host: 127.0.0.1
-  mailer_user: null
-  mailer_password: null
-  mailer_from_email: webmaster@ik3.indholdskanalen.vm
-  mailer_from_name: Webmaster Indholdskanalen
+    sharing_host: https://search.indholdskanalen.vm
+    sharing_path: /api
+    sharing_apikey: 795359dd2c81fa41af67faa2f9adbd32
 
-  locale: en
-  secret: ThisTokenIsNotSoSecretChangeIt
+    search_host: https://search.indholdskanalen.vm
+    search_path: /api
+    search_apikey: 795359dd2c81fa41af67faa2f9adbd32
+    search_index: e7df7cd2ca07f4f1ab415d457a6e1c13
 
-  debug_toolbar:          true
-  debug_redirects:        false
-  use_assetic_controller: true
-
-  middleware_host: http://127.0.0.1:3020
-  absolute_path_to_server: https://service.indholdskanalen.vm
-
-  search_host: http://127.0.0.1:3010
-  search_path: /api
-  search_index: e7df7cd2ca07f4f1ab415d457a6e1c13
-
-  zencoder_api: 1234567890
+    middleware_host: https://middleware.indholdskanalen.vm
+    middleware_path: /api
+    middleware_apikey: 059d9d9c50e0c45b529407b183b6a02f
 DELIM
 
-php composer.phar install  > /dev/null 2>&1
+php composer.phar install > /dev/null 2>&1
 php app/console doctrine:schema:update --force > /dev/null 2>&1
 
 # Setup super-user
-echo "Setting up super-user:   admin/admin"
+echo "Setting up super-user: admin/admin"
 php app/console fos:user:create --super-admin admin test@etek.dk admin > /dev/null 2>&1
 
 # Fix /etc/hosts
