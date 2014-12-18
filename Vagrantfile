@@ -8,10 +8,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Shared folder
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
- 
+
   # Hostname(s)
   config.vm.hostname = "indholdskanalen.vm"
-  config.hostsupdater.aliases = ["service.indholdskanalen.vm"]
+  config.hostsupdater.aliases = ["service.indholdskanalen.vm", "search.indholdskanalen.vm", "middleware.indholdskanalen.vm"]
 
   # What to install
   config.vm.provision :shell, :path => "bootstrap.sh"

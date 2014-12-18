@@ -257,7 +257,8 @@ server {
   listen 80;
 
   server_name search.indholdskanalen.vm;
-  rewrite ^ https://$server_name$request_uri? permanent;
+  rewrite ^ https://\$server_name\$request_uri? permanent;
+
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
@@ -268,15 +269,15 @@ server {
 server {
   listen 443;
 
-  server_name search.indholdskanalen.vm;;
+  server_name search.indholdskanalen.vm;
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
 
   location / {
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
 
     proxy_buffering off;
 
@@ -286,7 +287,7 @@ server {
 
   location /socket.io/ {
     proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
 
     proxy_pass http://nodejs_search;
@@ -314,7 +315,8 @@ server {
   listen 80;
 
   server_name middleware.indholdskanalen.vm;
-  rewrite ^ https://$server_name$request_uri? permanent;
+  rewrite ^ https://\$server_name\$request_uri? permanent;
+
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
@@ -325,15 +327,15 @@ server {
 server {
   listen 443;
 
-  server_name middleware.indholdskanalen.vm;;
+  server_name middleware.indholdskanalen.vm;
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
 
   location / {
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
 
     proxy_buffering off;
 
@@ -343,15 +345,15 @@ server {
 
   location /socket.io/ {
     proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
 
     proxy_pass http://nodejs_search;
   }
 
   ssl on;
-  ssl_certificate /etc/ssl/certs2014/indholdskanalen_dk.crt;
-  ssl_certificate_key /etc/ssl/certs2014/indholdskanalen_dk.key;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
 
   ssl_session_timeout 5m;
 
