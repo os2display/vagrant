@@ -459,22 +459,21 @@ cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
 DELIM
 
 # Config file for client
-cat > /vagrant/htdocs/client/js/config.js <<DELIM
+cat > /vagrant/htdocs/client/app/config.js <<DELIM
 window.config = {
-  resource: {
-    server: '//indholdskanalen.vm/',
-    uri: 'proxy'
+  "resource": {
+    "server": "//indholdskanalen.vm/",
+    "uri": 'proxy'
   },
-  ws: {
-    server: 'https://indholdskanalen.vm/'
+  "ws": {
+    "server": "https://indholdskanalen.vm/"
   },
-  backend: {
-    address: 'https://service.indholdskanalen.vm/'
+  "apikey": "059d9d9c50e0c45b529407b183b6a02f",
+  "cookie": {
+    "secure": false
   },
-  cookie: {
-    secure: false
-  }
-}
+  "debug": true
+};
 DELIM
 
 # NodeJS middleware
@@ -694,9 +693,6 @@ update-rc.d search_node defaults > /dev/null 2>&1
 echo "Setting up database indholdskanalen"
 echo "create database indholdskanalen" | mysql -uroot -pvagrant > /dev/null 2>&1
 
-# Copy Angular config file.
-cp /vagrant/htdocs/backend/web/js/example.configuration.js /vagrant/htdocs/backend/web/js/configuration.js
-
 # Get composer
 echo "Setting up composer"
 cd /vagrant/htdocs/backend
@@ -738,6 +734,33 @@ parameters:
     middleware_host: https://middleware.indholdskanalen.vm
     middleware_path: /api
     middleware_apikey: 059d9d9c50e0c45b529407b183b6a02f
+
+    templates_slides_directory: templates/slides/
+    templates_slides_enabled:
+        - manual-calendar
+        - only-image
+        - only-video
+        - portrait-text-top
+        - text-bottom
+        - text-left
+        - text-right
+        - text-top
+        - ik-iframe
+        - header-top
+        - event-calendar
+        - wayfinding
+
+    templates_screens_directory: templates/screens/
+    templates_screens_enabled:
+        - full-screen
+        - five-sections
+        - full-screen-portrait
+        - five-sections-wayfinding
+
+    site_title: Indholdskanalen
+
+    koba_apikey: b70a6d8511e05aa737ee68126d801558
+    koba_path: http://192.168.50.21
 DELIM
 
 php composer.phar install > /dev/null 2>&1
