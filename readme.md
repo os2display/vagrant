@@ -35,7 +35,7 @@ $ cp example.config.json config.json
 $ ./app.js
 </pre>
 
-# To access database in Sequal pro:
+# To access database in Sequel pro:
 <pre>
 Name: vagrant indholdskanalen
 MySQL Host: 127.0.0.1
