@@ -149,7 +149,7 @@ server {
     deny all;
   }
 
-  location /ik-templates/ {
+  location /templates/ {
     add_header 'Access-Control-Allow-Origin' "*";
   }
 
