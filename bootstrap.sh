@@ -814,4 +814,10 @@ service search_node start > /dev/null 2>&1
 echo "Starting middleware"
 service middleware start > /dev/null 2>&1
 
+echo "Adding crontab"
+crontab -l > mycron
+echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/backend/app/console ik:cron" >> mycron
+crontab mycron
+rm mycron
+
 echo "Done"
