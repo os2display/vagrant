@@ -476,7 +476,7 @@ window.config = {
 };
 DELIM
 
-# NodeJS middleware
+# NodeJS
 echo "Installing nodejs"
 apt-get install -y python-software-properties python redis-server > /dev/null 2>&1
 add-apt-repository ppa:chris-lea/node.js -y > /dev/null 2>&1
@@ -487,6 +487,10 @@ apt-get install -y nodejs > /dev/null 2>&1
 # Search node requirements
 echo "Installing search_node requirements"
 su vagrant -c "cd /vagrant/htdocs/search_node && ./install.sh" > /dev/null 2>&1
+
+# Search node requirements
+echo "Installing middleware requirements"
+su vagrant -c "cd /vagrant/htdocs/middleware && ./install.sh" > /dev/null 2>&1
 
 # Search node config
 cd /vagrant/htdocs/search_node/
