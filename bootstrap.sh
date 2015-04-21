@@ -784,9 +784,9 @@ echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
 echo "Installing elasticsearch"
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.deb > /dev/null 2>&1
-dpkg -i elasticsearch-1.5.1.deb > /dev/null 2>&1
-rm elasticsearch-1.5.1.deb
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.4.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.3.4.deb > /dev/null 2>&1
+rm elasticsearch-1.3.4.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
