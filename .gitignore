@@ -3,3 +3,4 @@ htdocs
 ~
 *.bak
 .vagrant
+docs

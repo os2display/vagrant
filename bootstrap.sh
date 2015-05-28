@@ -205,7 +205,7 @@ server {
   listen 443;
 
   server_name screen.indholdskanalen.vm;
-  root /vagrant/htdocsscreen;
+  root /vagrant/htdocs/screen;
 
   client_max_body_size 300m;
 
