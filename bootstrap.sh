@@ -98,12 +98,12 @@ unlink /etc/nginx/sites-enabled/default
 ln -s /vagrant/htdocs /var/www
 
 # Config files into nginx
-cat > /etc/nginx/sites-available/service.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/admin.indholdskanalen.vm.conf <<DELIM
 server {
   listen 80;
 
-  server_name service.indholdskanalen.vm;
-  root /var/www/admin/web;
+  server_name admin.indholdskanalen.vm;
+  root /vagrant/htdocs/admin/web;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
@@ -117,8 +117,8 @@ server {
 server {
   listen 443;
 
-  server_name service.indholdskanalen.vm;
-  root /var/www/admin/web;
+  server_name admin.indholdskanalen.vm;
+  root /vagrant/htdocs/admin/web;
 
   client_max_body_size 300m;
 
@@ -185,12 +185,12 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/screen.indholdskanalen.vm.conf <<DELIM
 server {
   listen 80;
 
-  server_name indholdskanalen.vm;
-  root /var/www/screen;
+  server_name screen.indholdskanalen.vm;
+  root /vagrant/htdocs/screen;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
@@ -204,8 +204,8 @@ server {
 server {
   listen 443;
 
-  server_name indholdskanalen.vm;
-  root /var/www/screen;
+  server_name screen.indholdskanalen.vm;
+  root /vagrant/htdocsscreen;
 
   client_max_body_size 300m;
 
@@ -367,8 +367,8 @@ DELIM
 # Symlink
 ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites-enabled/search.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/service.indholdskanalen.vm.conf /etc/nginx/sites-enabled/service.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/indholdskanalen.vm.conf /etc/nginx/sites-enabled/indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/admin.indholdskanalen.vm.conf /etc/nginx/sites-enabled/admin.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/screen.indholdskanalen.vm.conf /etc/nginx/sites-enabled/screen.indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -452,7 +452,7 @@ cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
 {
   "059d9d9c50e0c45b529407b183b6a02f": {
     "name": "IK3",
-    "backend": "https://service.indholdskanalen.vm",
+    "backend": "https://admin.indholdskanalen.vm",
     "expire": "300"
   }
 }
@@ -462,11 +462,11 @@ DELIM
 cat > /vagrant/htdocs/screen/app/config.js <<DELIM
 window.config = {
   "resource": {
-    "server": "//indholdskanalen.vm/",
+    "server": "//screen.indholdskanalen.vm/",
     "uri": 'proxy'
   },
   "ws": {
-    "server": "https://indholdskanalen.vm/"
+    "server": "https://screen.indholdskanalen.vm/"
   },
   "apikey": "059d9d9c50e0c45b529407b183b6a02f",
   "cookie": {
@@ -580,10 +580,6 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
   }
 }
 DELIM
-
-# Middleware node requirements
-echo "Installing middleware requirements"
-su vagrant -c "cd /vagrant/htdocs/middleware && npm install" > /dev/null 2>&1
 
 # Search Node service script
 echo "Setting up search_node service"
@@ -720,7 +716,7 @@ parameters:
     debug_toolbar: true
     debug_redirects: false
     use_assetic_controller: true
-    absolute_path_to_server: 'https://service.indholdskanalen.vm'
+    absolute_path_to_server: 'https://admin.indholdskanalen.vm'
     zencoder_api: 1234567890
     mailer_from_email: webmaster@ik3.indholdskanalen.dk
     mailer_from_name: Webmaster Indholdskanalen
@@ -775,8 +771,9 @@ echo "Setting up super-user: admin/admin"
 php app/console fos:user:create --super-admin admin test@etek.dk admin > /dev/null 2>&1
 
 # Fix /etc/hosts
-echo "Add service.indholdskanalen.vm to hosts"
-echo "127.0.1.1 service.indholdskanalen.vm" >> /etc/hosts
+echo "Add *.indholdskanalen.vm to hosts"
+echo "127.0.1.1 screen.indholdskanalen.vm" >> /etc/hosts
+echo "127.0.1.1 admin.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 search.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
 
