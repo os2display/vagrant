@@ -1,7 +1,7 @@
 mkdir htdocs
 cd htdocs
-git clone git@github.com:Indholdskanalen/indholdskanalen.git backend
+git clone git@github.com:Indholdskanalen/admin.git admin
 git clone git@github.com:Indholdskanalen/search_node.git search_node
 git clone git@github.com:Indholdskanalen/middleware.git middleware
-git clone git@github.com:Indholdskanalen/client.git client
+git clone git@github.com:Indholdskanalen/screen.git screen
 cd ..

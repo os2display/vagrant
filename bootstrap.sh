@@ -103,12 +103,12 @@ server {
   listen 80;
 
   server_name service.indholdskanalen.vm;
-  root /var/www/backend/web;
+  root /var/www/admin/web;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
-  access_log /var/log/nginx/backend_access.log;
-  error_log /var/log/nginx/backend_error.log;
+  access_log /var/log/nginx/admin_access.log;
+  error_log /var/log/nginx/admin_error.log;
 }
 
 
@@ -118,12 +118,12 @@ server {
   listen 443;
 
   server_name service.indholdskanalen.vm;
-  root /var/www/backend/web;
+  root /var/www/admin/web;
 
   client_max_body_size 300m;
 
-  access_log /var/log/nginx/backend_access.log;
-  error_log /var/log/nginx/backend_error.log;
+  access_log /var/log/nginx/admin_access.log;
+  error_log /var/log/nginx/admin_error.log;
 
   location / {
     # try to serve file directly, fallback to rewrite
@@ -190,12 +190,12 @@ server {
   listen 80;
 
   server_name indholdskanalen.vm;
-  root /var/www/client;
+  root /var/www/screen;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
-  access_log /var/log/nginx/client_access.log;
-  error_log /var/log/nginx/client_error.log;
+  access_log /var/log/nginx/screen_access.log;
+  error_log /var/log/nginx/screen_error.log;
 }
 
 
@@ -205,12 +205,12 @@ server {
   listen 443;
 
   server_name indholdskanalen.vm;
-  root /var/www/client;
+  root /var/www/screen;
 
   client_max_body_size 300m;
 
-  access_log /var/log/nginx/client_access.log;
-  error_log /var/log/nginx/client_error.log;
+  access_log /var/log/nginx/screen_access.log;
+  error_log /var/log/nginx/screen_error.log;
 
   location / {
     try_files \$uri \$uri/ /index.html;
@@ -458,8 +458,8 @@ cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
 }
 DELIM
 
-# Config file for client
-cat > /vagrant/htdocs/client/app/config.js <<DELIM
+# Config file for screen
+cat > /vagrant/htdocs/screen/app/config.js <<DELIM
 window.config = {
   "resource": {
     "server": "//indholdskanalen.vm/",
@@ -699,11 +699,11 @@ echo "create database indholdskanalen" | mysql -uroot -pvagrant > /dev/null 2>&1
 
 # Get composer
 echo "Setting up composer"
-cd /vagrant/htdocs/backend
+cd /vagrant/htdocs/admin
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
 
-# Config file for backend_indholdskanalen
-cat > /vagrant/htdocs/backend/app/config/parameters.yml <<DELIM
+# Config file for admin_indholdskanalen
+cat > /vagrant/htdocs/admin/app/config/parameters.yml <<DELIM
 parameters:
     database_driver: pdo_mysql
     database_host: 127.0.0.1
@@ -816,7 +816,7 @@ service middleware start > /dev/null 2>&1
 
 echo "Adding crontab"
 crontab -l > mycron
-echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/backend/app/console ik:cron" >> mycron
+echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console ik:cron" >> mycron
 crontab mycron
 rm mycron
 
