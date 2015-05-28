@@ -755,7 +755,6 @@ parameters:
         - full-screen
         - five-sections
         - full-screen-portrait
-        - five-sections-wayfinding
 
     site_title: Indholdskanalen
 
