@@ -472,7 +472,14 @@ window.config = {
   "cookie": {
     "secure": false
   },
-  "debug": true
+  "debug": true,
+  "version": "dev",
+  "itkLog": {
+    "version": "1",
+    "errorCallback": null,
+    "logToConsole": true,
+    "logLevel": "all"
+  }
 };
 DELIM
 
@@ -760,6 +767,13 @@ parameters:
 
     koba_apikey: b70a6d8511e05aa737ee68126d801558
     koba_path: http://192.168.50.21
+
+    version: dev
+
+    itk_log_version: 1
+    itk_log_error_callback: /api/error
+    itk_log_log_to_console: true
+    itk_log_log_level: all
 DELIM
 
 php composer.phar install > /dev/null 2>&1
