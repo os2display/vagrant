@@ -1,0 +1,6 @@
+htdocs
+*.old
+~
+*.bak
+.vagrant
+docs
