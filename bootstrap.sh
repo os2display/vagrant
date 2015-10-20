@@ -794,14 +794,17 @@ echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
 echo "Installing elasticsearch"
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.deb > /dev/null 2>&1
-dpkg -i elasticsearch-1.5.1.deb > /dev/null 2>&1
-rm elasticsearch-1.5.1.deb
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.7.1.deb > /dev/null 2>&1
+rm elasticsearch-1.7.1.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
 /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.5.0 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
+
+# Add symlink.
+ln -s /vagrant/htdocs/ /home/vagrant
 
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
