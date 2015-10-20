@@ -429,9 +429,13 @@ cat > /vagrant/htdocs/middleware/config.json <<DELIM
 {
   "port": 3020,
   "secret": "MySuperSecret",
-  "log": {
-    "file": "messages.log",
-    "debug": false
+  "logs": {
+    "all": "logs/messages.log",
+    "info": "logs/info.log",
+    "error": "logs/error.log",
+    "debug": "logs/debug.log",
+    "exceptions": "logs/exceptions.log",
+    "socket": "logs/socket.log"
   },
   "admin": {
     "username": "admin",
