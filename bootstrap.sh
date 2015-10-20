@@ -434,7 +434,7 @@ cat > /vagrant/htdocs/middleware/config.json <<DELIM
     "info": "logs/info.log",
     "error": "logs/error.log",
     "debug": "logs/debug.log",
-    "exceptions": "logs/exceptions.log",
+    "exception": "logs/exceptions.log",
     "socket": "logs/socket.log"
   },
   "admin": {
