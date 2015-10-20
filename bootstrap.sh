@@ -515,6 +515,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer":"analyzed"
         "sort": true,
         "indexable": true
       }
@@ -531,6 +532,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer":"analyzed"
         "sort": true,
         "indexable": true
       },
@@ -552,6 +554,7 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer":"analyzed"
         "sort": true,
         "indexable": true
       },
@@ -576,6 +579,7 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
       "e7df7cd2ca07f4f1ab415d457a6e1c13",
       "de831b7bf75d90f6641b4918dde0ddba"
     ]
+    "access": "rw"
   },
   "88cfd4b277f3f8b6c7c15d7a84784067": {
     "name": "Share",
@@ -584,6 +588,7 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
       "itkdevshare",
       "bibshare"
     ]
+    "access": "rw"
   }
 }
 DELIM
