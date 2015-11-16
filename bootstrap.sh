@@ -521,7 +521,8 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "default_analyzer": "string_index",
         "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -538,12 +539,14 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "default_analyzer": "string_index",
         "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       },
       {
         "field": "slides",
         "indexable": false,
-        "type": "object"
+        "type": "object",
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -560,12 +563,14 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "default_analyzer": "string_index",
         "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       },
       {
         "field": "slides",
         "indexable": false,
-        "type": "object"
+        "type": "object",
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
