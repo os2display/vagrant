@@ -429,9 +429,13 @@ cat > /vagrant/htdocs/middleware/config.json <<DELIM
 {
   "port": 3020,
   "secret": "MySuperSecret",
-  "log": {
-    "file": "messages.log",
-    "debug": false
+  "logs": {
+    "all": "logs/messages.log",
+    "info": "logs/info.log",
+    "error": "logs/error.log",
+    "debug": "logs/debug.log",
+    "exception": "logs/exceptions.log",
+    "socket": "logs/socket.log"
   },
   "admin": {
     "username": "admin",
@@ -515,8 +519,10 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -531,13 +537,16 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       },
       {
         "field": "slides",
         "indexable": false,
-        "type": "object"
+        "type": "object",
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -552,13 +561,16 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "language": "da",
         "country": "DK",
         "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
         "sort": true,
-        "indexable": true
+        "indexable": true,
+        "raw": false
       },
       {
         "field": "slides",
         "indexable": false,
-        "type": "object"
+        "type": "object",
+        "raw": false
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -575,7 +587,8 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
     "indexes": [
       "e7df7cd2ca07f4f1ab415d457a6e1c13",
       "de831b7bf75d90f6641b4918dde0ddba"
-    ]
+    ],
+    "access": "rw"
   },
   "88cfd4b277f3f8b6c7c15d7a84784067": {
     "name": "Share",
@@ -583,7 +596,8 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
     "indexes": [
       "itkdevshare",
       "bibshare"
-    ]
+    ],
+    "access": "rw"
   }
 }
 DELIM
@@ -794,14 +808,17 @@ echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
 echo "Installing elasticsearch"
 apt-get install openjdk-7-jre -y > /dev/null 2>&1
 cd /root
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.deb > /dev/null 2>&1
-dpkg -i elasticsearch-1.5.1.deb > /dev/null 2>&1
-rm elasticsearch-1.5.1.deb
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.deb > /dev/null 2>&1
+dpkg -i elasticsearch-1.7.1.deb > /dev/null 2>&1
+rm elasticsearch-1.7.1.deb
 update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
 /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.5.0 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
+
+# Add symlink.
+ln -s /vagrant/htdocs/ /home/vagrant
 
 echo "Starting php5-fpm"
 service php5-fpm start > /dev/null 2>&1
