@@ -457,7 +457,7 @@ cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
   "059d9d9c50e0c45b529407b183b6a02f": {
     "name": "IK3",
     "backend": "https://admin.indholdskanalen.vm",
-    "expire": "300"
+    "expire": 300
   }
 }
 DELIM
@@ -501,6 +501,8 @@ su vagrant -c "cd /vagrant/htdocs/search_node && ./install.sh" > /dev/null 2>&1
 
 # Search node requirements
 echo "Installing middleware requirements"
+# @TODO: remove this when logger plugin can handle a non-existing directory
+mkdir /vagrant/htdocs/middleware/logs
 su vagrant -c "cd /vagrant/htdocs/middleware && ./install.sh" > /dev/null 2>&1
 
 # Search node config
