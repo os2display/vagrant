@@ -4,3 +4,4 @@ htdocs
 *.bak
 .vagrant
 docs
+.idea
