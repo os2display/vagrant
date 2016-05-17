@@ -427,7 +427,7 @@ ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites
 ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/admin.indholdskanalen.vm.conf /etc/nginx/sites-enabled/admin.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/screen.indholdskanalen.vm.conf /etc/nginx/sites-enabled/screen.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/styleguilde.indholdskanalen.vm.conf /etc/nginx/sites-enabled/styleguilde.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf /etc/nginx/sites-enabled/styleguide.indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
