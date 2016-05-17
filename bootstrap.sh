@@ -368,14 +368,13 @@ server {
 DELIM
 
 cat > /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf <<DELIM
-
 server {
   listen 80;
 
   server_name styleguide.indholdskanalen.vm;
   root /vagrant/htdocs/styleguide;
 
-  rewrite ^ https://$server_name$request_uri? permanent;
+  rewrite ^ https://\$server_name\$request_uri? permanent;
 
   access_log /var/log/nginx/styleguide_access.log;
   error_log /var/log/nginx/styleguide_error.log;
@@ -395,11 +394,11 @@ server {
   access_log /var/log/nginx/styleguide_access.log;
   error_log /var/log/nginx/styleguide_error.log;
 
-  location ~ \.php$ {
+  location ~ \.php\$ {
     fastcgi_pass unix:/var/run/php5-fpm.sock;
-    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    fastcgi_split_path_info ^(.+\.php)(/.*)\$;
     include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
     fastcgi_param HTTPS off;
   }
 
