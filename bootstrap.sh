@@ -367,11 +367,67 @@ server {
 }
 DELIM
 
+cat > /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf <<DELIM
+
+server {
+  listen 80;
+
+  server_name styleguide.indholdskanalen.vm;
+  root /vagrant/htdocs/styleguide;
+
+  rewrite ^ https://$server_name$request_uri? permanent;
+
+  access_log /var/log/nginx/styleguide_access.log;
+  error_log /var/log/nginx/styleguide_error.log;
+}
+
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name styleguide.indholdskanalen.vm;
+  root /vagrant/htdocs/styleguide;
+
+  client_max_body_size 300m;
+
+  access_log /var/log/nginx/styleguide_access.log;
+  error_log /var/log/nginx/styleguide_error.log;
+
+  location ~ \.php$ {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+  }
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  location ~ /\.ht {
+    deny all;
+  }
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+
+  ssl_session_timeout 5m;
+
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+}
+DELIM
+
 # Symlink
 ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites-enabled/search.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/admin.indholdskanalen.vm.conf /etc/nginx/sites-enabled/admin.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/screen.indholdskanalen.vm.conf /etc/nginx/sites-enabled/screen.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/styleguilde.indholdskanalen.vm.conf /etc/nginx/sites-enabled/styleguilde.indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -808,6 +864,7 @@ echo "127.0.1.1 screen.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 admin.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 search.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
+echo "127.0.1.1 styleguide.indholdskanalen.vm" >> /etc/hosts
 
 # Elastic search
 echo "Installing elasticsearch"

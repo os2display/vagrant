@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Hostname(s)
   config.vm.hostname = "indholdskanalen.vm"
-  config.hostsupdater.aliases = ["screen.indholdskanalen.vm", "admin.indholdskanalen.vm", "search.indholdskanalen.vm", "middleware.indholdskanalen.vm"]
+  config.hostsupdater.aliases = ["screen.indholdskanalen.vm", "admin.indholdskanalen.vm", "search.indholdskanalen.vm", "middleware.indholdskanalen.vm", "styleguide.indholdskanalen.vm"]
 
   # What to install
   config.vm.provision :shell, :path => "bootstrap.sh"
