@@ -878,6 +878,15 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.5.0 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
 
+# Install gulp
+sudo npm install -g gulp > /dev/null 2>&1
+cd /vagrant/htdocs/styleguide
+sudo npm install > /dev/null 2>&1
+cd /vagrant/htdocs/admin
+sudo npm install > /dev/null 2>&1
+cd /vagrant/htdocs/screen
+sudo npm install > /dev/null 2>&1
+
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
 
