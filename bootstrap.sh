@@ -394,6 +394,11 @@ server {
   access_log /var/log/nginx/styleguide_access.log;
   error_log /var/log/nginx/styleguide_error.log;
 
+  location / {
+      index index.php index.html index.htm;
+      try_files \$uri \$uri/ =404;
+  }
+
   location ~ \.php\$ {
     fastcgi_pass unix:/var/run/php5-fpm.sock;
     fastcgi_split_path_info ^(.+\.php)(/.*)\$;
