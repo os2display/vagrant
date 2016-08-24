@@ -23,6 +23,9 @@ export LC_ALL=en_DK.UTF-8 > /dev/null 2>&1
 cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
 deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
+
+deb http://packages.dotdeb.org wheezy-php55 all
+deb-src http://packages.dotdeb.org wheezy-php55 all
 DELIM
 wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
 apt-key add dotdeb.gpg  > /dev/null 2>&1
@@ -364,11 +367,71 @@ server {
 }
 DELIM
 
+cat > /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf <<DELIM
+server {
+  listen 80;
+
+  server_name styleguide.indholdskanalen.vm;
+  root /vagrant/htdocs/styleguide;
+
+  rewrite ^ https://\$server_name\$request_uri? permanent;
+
+  access_log /var/log/nginx/styleguide_access.log;
+  error_log /var/log/nginx/styleguide_error.log;
+}
+
+
+# HTTPS server
+#
+server {
+  listen 443;
+
+  server_name styleguide.indholdskanalen.vm;
+  root /vagrant/htdocs/styleguide;
+
+  client_max_body_size 300m;
+
+  access_log /var/log/nginx/styleguide_access.log;
+  error_log /var/log/nginx/styleguide_error.log;
+
+  location / {
+      index index.php index.html index.htm;
+      try_files \$uri \$uri/ =404;
+  }
+
+  location ~ \.php\$ {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_split_path_info ^(.+\.php)(/.*)\$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+  }
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  location ~ /\.ht {
+    deny all;
+  }
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/server.cert;
+  ssl_certificate_key /etc/ssl/nginx/server.key;
+
+  ssl_session_timeout 5m;
+
+  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+}
+DELIM
+
 # Symlink
 ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites-enabled/search.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/admin.indholdskanalen.vm.conf /etc/nginx/sites-enabled/admin.indholdskanalen.vm.conf
 ln -s /etc/nginx/sites-available/screen.indholdskanalen.vm.conf /etc/nginx/sites-enabled/screen.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf /etc/nginx/sites-enabled/styleguide.indholdskanalen.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -489,9 +552,9 @@ DELIM
 
 # NodeJS
 echo "Installing nodejs"
-apt-get install -y python-software-properties python redis-server > /dev/null 2>&1
-add-apt-repository ppa:chris-lea/node.js -y > /dev/null 2>&1
-sed -i 's/wheezy/lucid/g' /etc/apt/sources.list.d/chris-lea-node_js-wheezy.list
+wget https://deb.nodesource.com/setup_4.x -O /tmp/node_install.sh
+chmod 700 /tmp/node_install.sh
+/tmp/node_install.sh
 apt-get update > /dev/null 2>&1
 apt-get install -y nodejs > /dev/null 2>&1
 
@@ -805,6 +868,7 @@ echo "127.0.1.1 screen.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 admin.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 search.indholdskanalen.vm" >> /etc/hosts
 echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
+echo "127.0.1.1 styleguide.indholdskanalen.vm" >> /etc/hosts
 
 # Elastic search
 echo "Installing elasticsearch"
@@ -818,6 +882,12 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 # Elasticsearch plugins
 /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.5.0 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
+
+# Install gulp
+su vagrant -c "npm install -g gulp" > /dev/null 2>&1
+su vagrant -c "/vagrant/htdocs/styleguide && npm install" > /dev/null 2>&1
+su vagrant -c "/vagrant/htdocs/admin && npm install" > /dev/null 2>&1
+su vagrant -c "/vagrant/htdocs/screen && npm install" > /dev/null 2>&1
 
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
