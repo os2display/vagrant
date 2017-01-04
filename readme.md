@@ -1,8 +1,8 @@
 # Introduction
-This vagrant provides the setup for a local version of the indholdskanalen server setup.
+This vagrant provides the setup for a local version of the os2display server setup.
 
  * It installs nginx, php, mysql, symfony, nodejs, redis, etc.
- * It installs a database "aroskanalen" for the symfony backend.
+ * It installs a database "os2display" for the symfony backend.
  * Afterwards it starts up the search and middleware nodejs apps.
 
 # Vagrant setup
@@ -13,7 +13,7 @@ vagrant plugin install vagrant-hostsupdater
 </pre>
 
 # Installation.
-You should use the setup\_htdocs.sh script to create the htdocs folder which clones the repositories from http://github.com/aroskanalen. __NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
+You should use the setup\_htdocs.sh script to create the htdocs folder which clones the repositories from http://github.com/os2display. __NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
 
 <pre>
  ./setup_htdocs.sh
@@ -24,7 +24,7 @@ Start the vagrant.
 vagrant up
 </pre>
 
-When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.indholdskanalen.vm and click the _indexes_ tab. Then click the _activate_ links foreach index.
+When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab. Then click the _activate_ links foreach index.
 
 # Troubleshoot
 
@@ -38,11 +38,11 @@ sudo service middleware start/stop
 ## MySQL access
 If you need to access the database from outside the VM with e.g. _Sequel Pro_ or any other SQL client that can connect via SSH the following can be used.
 <pre>
-Name: Aroskanalen
+Name: os2display
 MySQL Host: 127.0.0.1
 Username: root
 Password: vagrant
-SSH Host: admin.aroskanalen.vm
+SSH Host: admin.os2display.vm
 SSH User: vagrant
 SSH Key: ~/.vagrant.d/insecure_private_key
 </pre>
