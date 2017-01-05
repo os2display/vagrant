@@ -6,8 +6,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # IP
   config.vm.network "private_network", ip: "192.168.50.129"
 
+  # Memory
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+  end
+
   # Shared folder
-  config.vm.synced_folder ".", "/vagrant", type: "nfs"
+  config.vm.synced_folder ".", "/vagrant",
+    :nfs => true,
+    :mount_options => ['actimeo=2']
 
   # Hostname(s)
   config.vm.hostname = "os2display.vm"
