@@ -372,7 +372,7 @@ server {
   listen 80;
 
   server_name styleguide.os2display.vm;
-  root /vagrant/htdocs/styleguide;
+  root /vagrant/htdocs/styleguide/public;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
@@ -387,7 +387,7 @@ server {
   listen 443;
 
   server_name styleguide.os2display.vm;
-  root /vagrant/htdocs/styleguide;
+  root /vagrant/htdocs/styleguide/public;
 
   client_max_body_size 300m;
 
