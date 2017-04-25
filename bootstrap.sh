@@ -856,7 +856,7 @@ parameters:
 DELIM
 
 php composer.phar install > /dev/null 2>&1
-php app/console doctrine:schema:update --force > /dev/null 2>&1
+php app/console doctrine:migrations:migrate --no-interaction > /dev/null 2>&1
 
 # Setup super-user
 echo "Setting up super-user: admin/admin"
