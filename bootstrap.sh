@@ -919,4 +919,56 @@ echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console ik:cron" >> myc
 crontab mycron
 rm mycron
 
+# Set up MailHog
+mkdir -p /opt/mailhog/bin
+chmod -Rv a+x /opt/mailhog
+curl --location https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64 > /opt/mailhog/bin/MailHog
+chmod a+x /opt/mailhog/bin/MailHog
+
+cat > /etc/init.d/mailhog <<'EOF'
+#! /bin/sh
+# /etc/init.d/mailhog
+#
+# MailHog init script.
+#
+# @author Mikkel Ricky <rimi@aarhus.dk>
+
+### BEGIN INIT INFO
+# Provides:          mailhog
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: MailHog
+# Description:       MailHog
+### END INIT INFO
+
+NAME=mailhog
+DAEMON=/opt/mailhog/bin/MailHog
+PIDFILE=/var/run/mailhog.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+test -f $DAEMON || exit 5
+
+. /lib/lsb/init-functions
+
+case $1 in
+start) start-stop-daemon --start --exec $DAEMON --pidfile $PIDFILE --make-pidfile --background
+       ;;
+stop)  start-stop-daemon --stop --pidfile $PIDFILE
+       ;;
+*)     echo "Usage: $SCRIPTNAME {start|stop}"
+       exit 2
+       ;;
+esac
+EOF
+chmod a+x /etc/init.d/mailhog
+
+update-rc.d mailhog defaults
+service mailhog start
+
+cat > /etc/php5/mods-available/mailhog.ini <<'EOF'
+sendmail_path = /opt/mailhog/bin/MailHog sendmail
+EOF
+
 echo "Done"
