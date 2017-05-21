@@ -24,8 +24,8 @@ cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
 deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
 
-deb http://packages.dotdeb.org wheezy-php55 all
-deb-src http://packages.dotdeb.org wheezy-php55 all
+deb http://packages.dotdeb.org wheezy-php56 all
+deb-src http://packages.dotdeb.org wheezy-php56 all
 DELIM
 wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
 apt-key add dotdeb.gpg  > /dev/null 2>&1
