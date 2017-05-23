@@ -588,6 +588,18 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "sort": true,
         "indexable": true,
         "raw": false
+      },
+      {
+        "type": "string",
+        "country": "DK",
+        "language": "da",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false,
+        "geopoint": false,
+        "field": "name"
       }
     ],
     "dates": [ "created_at", "updated_at" ]
