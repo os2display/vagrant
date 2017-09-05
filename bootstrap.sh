@@ -24,8 +24,8 @@ cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
 deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
 
-deb http://packages.dotdeb.org wheezy-php55 all
-deb-src http://packages.dotdeb.org wheezy-php55 all
+deb http://packages.dotdeb.org wheezy-php56 all
+deb-src http://packages.dotdeb.org wheezy-php56 all
 DELIM
 wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
 apt-key add dotdeb.gpg  > /dev/null 2>&1
@@ -68,7 +68,7 @@ apt-get install -y memcached php5-memcached > /dev/null 2>&1
 echo "Configuring APC"
 apt-get install -y php-apc > /dev/null 2>&1
 
-cat > /etc/php5/conf.d/apc.ini <<DELIM
+cat > /etc/php5/fpm/conf.d/apc.ini <<DELIM
 apc.enabled=1
 apc.shm_segments=1
 apc.optimization=0
@@ -84,7 +84,7 @@ DELIM
 # x-debug
 echo "Configure x-debug"
 
-cat << DELIM >> /etc/php5/conf.d/20-xdebug.ini
+cat << DELIM >> /etc/php5/fpm/conf.d/20-xdebug.ini
 xdebug.remote_enable=1
 xdebug.remote_handler=dbgp
 xdebug.remote_host=192.168.50.1
@@ -101,11 +101,11 @@ unlink /etc/nginx/sites-enabled/default
 ln -s /vagrant/htdocs /var/www
 
 # Config files into nginx
-cat > /etc/nginx/sites-available/admin.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/admin.os2display.vm.conf <<DELIM
 server {
   listen 80;
 
-  server_name admin.indholdskanalen.vm;
+  server_name admin.os2display.vm;
   root /vagrant/htdocs/admin/web;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
@@ -120,7 +120,7 @@ server {
 server {
   listen 443;
 
-  server_name admin.indholdskanalen.vm;
+  server_name admin.os2display.vm;
   root /vagrant/htdocs/admin/web;
 
   client_max_body_size 300m;
@@ -188,11 +188,11 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/screen.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/screen.os2display.vm.conf <<DELIM
 server {
   listen 80;
 
-  server_name screen.indholdskanalen.vm;
+  server_name screen.os2display.vm;
   root /vagrant/htdocs/screen;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
@@ -207,7 +207,7 @@ server {
 server {
   listen 443;
 
-  server_name screen.indholdskanalen.vm;
+  server_name screen.os2display.vm;
   root /vagrant/htdocs/screen;
 
   client_max_body_size 300m;
@@ -251,7 +251,7 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/search.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/search.os2display.vm.conf <<DELIM
 upstream nodejs_search {
   server 127.0.0.1:3010;
 }
@@ -259,7 +259,7 @@ upstream nodejs_search {
 server {
   listen 80;
 
-  server_name search.indholdskanalen.vm;
+  server_name search.os2display.vm;
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
 
@@ -272,7 +272,7 @@ server {
 server {
   listen 443;
 
-  server_name search.indholdskanalen.vm;
+  server_name search.os2display.vm;
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
@@ -309,7 +309,7 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/middleware.os2display.vm.conf <<DELIM
 upstream nodejs_middleware {
   server 127.0.0.1:3020;
 }
@@ -317,7 +317,7 @@ upstream nodejs_middleware {
 server {
   listen 80;
 
-  server_name middleware.indholdskanalen.vm;
+  server_name middleware.os2display.vm;
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
 
@@ -330,7 +330,7 @@ server {
 server {
   listen 443;
 
-  server_name middleware.indholdskanalen.vm;
+  server_name middleware.os2display.vm;
 
   access_log /var/log/nginx/search_access.log;
   error_log /var/log/nginx/search_error.log;
@@ -367,12 +367,12 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf <<DELIM
+cat > /etc/nginx/sites-available/styleguide.os2display.vm.conf <<DELIM
 server {
   listen 80;
 
-  server_name styleguide.indholdskanalen.vm;
-  root /vagrant/htdocs/styleguide;
+  server_name styleguide.os2display.vm;
+  root /vagrant/htdocs/styleguide/public;
 
   rewrite ^ https://\$server_name\$request_uri? permanent;
 
@@ -386,8 +386,8 @@ server {
 server {
   listen 443;
 
-  server_name styleguide.indholdskanalen.vm;
-  root /vagrant/htdocs/styleguide;
+  server_name styleguide.os2display.vm;
+  root /vagrant/htdocs/styleguide/public;
 
   client_max_body_size 300m;
 
@@ -427,11 +427,11 @@ server {
 DELIM
 
 # Symlink
-ln -s /etc/nginx/sites-available/search.indholdskanalen.vm.conf /etc/nginx/sites-enabled/search.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/middleware.indholdskanalen.vm.conf /etc/nginx/sites-enabled/middleware.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/admin.indholdskanalen.vm.conf /etc/nginx/sites-enabled/admin.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/screen.indholdskanalen.vm.conf /etc/nginx/sites-enabled/screen.indholdskanalen.vm.conf
-ln -s /etc/nginx/sites-available/styleguide.indholdskanalen.vm.conf /etc/nginx/sites-enabled/styleguide.indholdskanalen.vm.conf
+ln -s /etc/nginx/sites-available/search.os2display.vm.conf /etc/nginx/sites-enabled/search.os2display.vm.conf
+ln -s /etc/nginx/sites-available/middleware.os2display.vm.conf /etc/nginx/sites-enabled/middleware.os2display.vm.conf
+ln -s /etc/nginx/sites-available/admin.os2display.vm.conf /etc/nginx/sites-enabled/admin.os2display.vm.conf
+ln -s /etc/nginx/sites-available/screen.os2display.vm.conf /etc/nginx/sites-enabled/screen.os2display.vm.conf
+ln -s /etc/nginx/sites-available/styleguide.os2display.vm.conf /etc/nginx/sites-enabled/styleguide.os2display.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -519,7 +519,7 @@ cat > /vagrant/htdocs/middleware/apikeys.json <<DELIM
 {
   "059d9d9c50e0c45b529407b183b6a02f": {
     "name": "IK3",
-    "backend": "https://admin.indholdskanalen.vm",
+    "backend": "https://admin.os2display.vm",
     "expire": 300
   }
 }
@@ -529,11 +529,11 @@ DELIM
 cat > /vagrant/htdocs/screen/app/config.js <<DELIM
 window.config = {
   "resource": {
-    "server": "//screen.indholdskanalen.vm/",
+    "server": "//screen.os2display.vm/",
     "uri": 'proxy'
   },
   "ws": {
-    "server": "https://screen.indholdskanalen.vm/"
+    "server": "https://screen.os2display.vm/"
   },
   "apikey": "059d9d9c50e0c45b529407b183b6a02f",
   "cookie": {
@@ -575,7 +575,7 @@ cp example.config.json config.json
 cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
 {
   "e7df7cd2ca07f4f1ab415d457a6e1c13": {
-    "name": "Indholdskanalen",
+    "name": "os2display",
     "tag": "private",
     "fields": [
       {
@@ -588,6 +588,18 @@ cat > /vagrant/htdocs/search_node/mappings.json <<DELIM
         "sort": true,
         "indexable": true,
         "raw": false
+      },
+      {
+        "type": "string",
+        "country": "DK",
+        "language": "da",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false,
+        "geopoint": false,
+        "field": "name"
       }
     ],
     "dates": [ "created_at", "updated_at" ]
@@ -776,21 +788,21 @@ update-rc.d middleware defaults > /dev/null 2>&1
 update-rc.d search_node defaults > /dev/null 2>&1
 
 # Create database
-echo "Setting up database indholdskanalen"
-echo "create database indholdskanalen" | mysql -uroot -pvagrant > /dev/null 2>&1
+echo "Setting up database os2display"
+echo "create database os2display" | mysql -uroot -pvagrant > /dev/null 2>&1
 
 # Get composer
 echo "Setting up composer"
 cd /vagrant/htdocs/admin
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
 
-# Config file for admin_indholdskanalen
+# Config file for admin_os2display
 cat > /vagrant/htdocs/admin/app/config/parameters.yml <<DELIM
 parameters:
     database_driver: pdo_mysql
     database_host: 127.0.0.1
     database_port: null
-    database_name: indholdskanalen
+    database_name: os2display
     database_user: root
     database_password: vagrant
     mailer_transport: smtp
@@ -802,22 +814,22 @@ parameters:
     debug_toolbar: true
     debug_redirects: false
     use_assetic_controller: true
-    absolute_path_to_server: 'https://admin.indholdskanalen.vm'
+    absolute_path_to_server: 'https://admin.os2display.vm'
     zencoder_api: 1234567890
-    mailer_from_email: webmaster@ik3.indholdskanalen.dk
-    mailer_from_name: Webmaster Indholdskanalen
+    mailer_from_email: webmaster@ik3.os2display.dk
+    mailer_from_name: Webmaster os2display
     templates_directory: ik-templates/
 
-    sharing_host: https://search.indholdskanalen.vm
+    sharing_host: https://search.os2display.vm
     sharing_path: /api
     sharing_apikey: 88cfd4b277f3f8b6c7c15d7a84784067
 
-    search_host: https://search.indholdskanalen.vm
+    search_host: https://search.os2display.vm
     search_path: /api
     search_apikey: 795359dd2c81fa41af67faa2f9adbd32
     search_index: e7df7cd2ca07f4f1ab415d457a6e1c13
 
-    middleware_host: https://middleware.indholdskanalen.vm
+    middleware_host: https://middleware.os2display.vm
     middleware_path: /api
     middleware_apikey: 059d9d9c50e0c45b529407b183b6a02f
 
@@ -842,7 +854,7 @@ parameters:
         - five-sections
         - full-screen-portrait
 
-    site_title: Indholdskanalen
+    site_title: os2display
 
     koba_apikey: b70a6d8511e05aa737ee68126d801558
     koba_path: http://192.168.50.21
@@ -856,19 +868,19 @@ parameters:
 DELIM
 
 php composer.phar install > /dev/null 2>&1
-php app/console doctrine:schema:update --force > /dev/null 2>&1
+php app/console doctrine:migrations:migrate --no-interaction > /dev/null 2>&1
 
 # Setup super-user
 echo "Setting up super-user: admin/admin"
 php app/console fos:user:create --super-admin admin test@etek.dk admin > /dev/null 2>&1
 
 # Fix /etc/hosts
-echo "Add *.indholdskanalen.vm to hosts"
-echo "127.0.1.1 screen.indholdskanalen.vm" >> /etc/hosts
-echo "127.0.1.1 admin.indholdskanalen.vm" >> /etc/hosts
-echo "127.0.1.1 search.indholdskanalen.vm" >> /etc/hosts
-echo "127.0.1.1 middleware.indholdskanalen.vm" >> /etc/hosts
-echo "127.0.1.1 styleguide.indholdskanalen.vm" >> /etc/hosts
+echo "Add *.os2display.vm to hosts"
+echo "127.0.1.1 screen.os2display.vm" >> /etc/hosts
+echo "127.0.1.1 admin.os2display.vm" >> /etc/hosts
+echo "127.0.1.1 search.os2display.vm" >> /etc/hosts
+echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts
+echo "127.0.1.1 styleguide.os2display.vm" >> /etc/hosts
 
 # Elastic search
 echo "Installing elasticsearch"
@@ -884,10 +896,10 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
 
 # Install gulp
-su vagrant -c "npm install -g gulp" > /dev/null 2>&1
-su vagrant -c "/vagrant/htdocs/styleguide && npm install" > /dev/null 2>&1
-su vagrant -c "/vagrant/htdocs/admin && npm install" > /dev/null 2>&1
-su vagrant -c "/vagrant/htdocs/screen && npm install" > /dev/null 2>&1
+npm install --global gulp > /dev/null 2>&1
+su --login vagrant -c "cd /vagrant/htdocs/styleguide && npm install" > /dev/null 2>&1
+su --login vagrant -c "cd /vagrant/htdocs/admin && npm install" > /dev/null 2>&1
+su --login vagrant -c "cd /vagrant/htdocs/screen && npm install" > /dev/null 2>&1
 
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
@@ -918,5 +930,57 @@ crontab -l > mycron
 echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console ik:cron" >> mycron
 crontab mycron
 rm mycron
+
+# Set up MailHog
+mkdir -p /opt/mailhog/bin
+chmod -Rv a+x /opt/mailhog
+curl --location https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64 > /opt/mailhog/bin/MailHog
+chmod a+x /opt/mailhog/bin/MailHog
+
+cat > /etc/init.d/mailhog <<'EOF'
+#! /bin/sh
+# /etc/init.d/mailhog
+#
+# MailHog init script.
+#
+# @author Mikkel Ricky <rimi@aarhus.dk>
+
+### BEGIN INIT INFO
+# Provides:          mailhog
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: MailHog
+# Description:       MailHog
+### END INIT INFO
+
+NAME=mailhog
+DAEMON=/opt/mailhog/bin/MailHog
+PIDFILE=/var/run/mailhog.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+test -f $DAEMON || exit 5
+
+. /lib/lsb/init-functions
+
+case $1 in
+start) start-stop-daemon --start --exec $DAEMON --pidfile $PIDFILE --make-pidfile --background
+       ;;
+stop)  start-stop-daemon --stop --pidfile $PIDFILE
+       ;;
+*)     echo "Usage: $SCRIPTNAME {start|stop}"
+       exit 2
+       ;;
+esac
+EOF
+chmod a+x /etc/init.d/mailhog
+
+update-rc.d mailhog defaults
+service mailhog start
+
+cat > /etc/php5/mods-available/mailhog.ini <<'EOF'
+sendmail_path = /opt/mailhog/bin/MailHog sendmail
+EOF
 
 echo "Done"

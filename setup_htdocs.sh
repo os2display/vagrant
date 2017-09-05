@@ -1,8 +1,10 @@
 mkdir htdocs
 cd htdocs
-git clone git@github.com:aroskanalen/admin.git admin
 git clone git@github.com:search-node/search_node.git search_node
-git clone git@github.com:aroskanalen/middleware.git middleware
-git clone git@github.com:aroskanalen/screen.git screen
-git clone git@github.com:aroskanalen/styleguide.git styleguide
+
+git clone git@github.com:itk-os2display/docs.git docs
+git clone git@github.com:itk-os2display/admin.git admin
+git clone git@github.com:itk-os2display/middleware.git middleware
+git clone git@github.com:itk-os2display/screen.git screen
+git clone git@github.com:itk-os2display/styleguide.git styleguide
 cd ..
