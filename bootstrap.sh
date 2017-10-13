@@ -42,6 +42,8 @@ apt-get install -y mysql-server > /dev/null 2>&1
 # PHP5
 echo "Installing php"
 apt-get install -y php5-fpm php5-cli php5-xdebug php5-mysql php5-curl php5-gd git > /dev/null 2>&1
+# Used by os2display bundle tests
+apt-get install -y php5-sqlite > /dev/null 2>&1
 
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/cli/php.ini
 sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/fpm/php.ini
@@ -735,6 +737,7 @@ echo "create database os2display" | mysql -uroot -pvagrant > /dev/null 2>&1
 echo "Setting up composer"
 cd /vagrant/htdocs/admin
 curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
+mv /vagrant/htdocs/admin/composer.phar /usr/local/bin/composer
 
 # Config file for admin_os2display
 cat > /vagrant/htdocs/admin/app/config/parameters.yml <<DELIM
@@ -843,7 +846,7 @@ su --login vagrant -c "cd /vagrant/htdocs/screen && npm install" > /dev/null 2>&
 ln -s /vagrant/htdocs/ /home/vagrant
 
 echo "Starting php5-fpm"
-service php5-fpm start > /dev/null 2>&1
+service php5-fpm restart > /dev/null 2>&1
 
 echo "Starting nginx"
 service nginx restart > /dev/null 2>&1
@@ -865,7 +868,7 @@ service middleware start > /dev/null 2>&1
 
 echo "Adding crontab"
 crontab -l > mycron
-echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console ik:cron" >> mycron
+echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console os2display:core:cron" >> mycron
 crontab mycron
 rm mycron
 
