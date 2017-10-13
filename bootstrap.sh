@@ -369,71 +369,11 @@ server {
 }
 DELIM
 
-cat > /etc/nginx/sites-available/styleguide.os2display.vm.conf <<DELIM
-server {
-  listen 80;
-
-  server_name styleguide.os2display.vm;
-  root /vagrant/htdocs/styleguide/public;
-
-  rewrite ^ https://\$server_name\$request_uri? permanent;
-
-  access_log /var/log/nginx/styleguide_access.log;
-  error_log /var/log/nginx/styleguide_error.log;
-}
-
-
-# HTTPS server
-#
-server {
-  listen 443;
-
-  server_name styleguide.os2display.vm;
-  root /vagrant/htdocs/styleguide/public;
-
-  client_max_body_size 300m;
-
-  access_log /var/log/nginx/styleguide_access.log;
-  error_log /var/log/nginx/styleguide_error.log;
-
-  location / {
-      index index.php index.html index.htm;
-      try_files \$uri \$uri/ =404;
-  }
-
-  location ~ \.php\$ {
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
-    fastcgi_split_path_info ^(.+\.php)(/.*)\$;
-    include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-    fastcgi_param HTTPS off;
-  }
-
-  # deny access to .htaccess files, if Apache's document root
-  # concurs with nginx's one
-  location ~ /\.ht {
-    deny all;
-  }
-
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/server.cert;
-  ssl_certificate_key /etc/ssl/nginx/server.key;
-
-  ssl_session_timeout 5m;
-
-  # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
-  ssl_prefer_server_ciphers On;
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-}
-DELIM
-
 # Symlink
 ln -s /etc/nginx/sites-available/search.os2display.vm.conf /etc/nginx/sites-enabled/search.os2display.vm.conf
 ln -s /etc/nginx/sites-available/middleware.os2display.vm.conf /etc/nginx/sites-enabled/middleware.os2display.vm.conf
 ln -s /etc/nginx/sites-available/admin.os2display.vm.conf /etc/nginx/sites-enabled/admin.os2display.vm.conf
 ln -s /etc/nginx/sites-available/screen.os2display.vm.conf /etc/nginx/sites-enabled/screen.os2display.vm.conf
-ln -s /etc/nginx/sites-available/styleguide.os2display.vm.conf /etc/nginx/sites-enabled/styleguide.os2display.vm.conf
 
 # SSL
 mkdir /etc/ssl/nginx
@@ -883,7 +823,6 @@ echo "127.0.1.1 screen.os2display.vm" >> /etc/hosts
 echo "127.0.1.1 admin.os2display.vm" >> /etc/hosts
 echo "127.0.1.1 search.os2display.vm" >> /etc/hosts
 echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts
-echo "127.0.1.1 styleguide.os2display.vm" >> /etc/hosts
 
 # Elastic search
 echo "Installing elasticsearch"
@@ -900,7 +839,6 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Install gulp
 npm install --global gulp > /dev/null 2>&1
-su --login vagrant -c "cd /vagrant/htdocs/styleguide && npm install" > /dev/null 2>&1
 su --login vagrant -c "cd /vagrant/htdocs/admin && npm install" > /dev/null 2>&1
 su --login vagrant -c "cd /vagrant/htdocs/screen && npm install" > /dev/null 2>&1
 
