@@ -6,4 +6,9 @@ git clone git@github.com:itk-os2display/docs.git docs
 git clone git@github.com:itk-os2display/admin.git admin
 git clone git@github.com:itk-os2display/middleware.git middleware
 git clone git@github.com:itk-os2display/screen.git screen
-cd ..
+
+cd admin/src
+
+./setup_src.sh
+
+cd ../../..
