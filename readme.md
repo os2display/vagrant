@@ -13,10 +13,10 @@ vagrant plugin install vagrant-hostsupdater
 </pre>
 
 # Installation.
-You should use the setup\_htdocs.sh script to create the htdocs folder which clones the repositories from http://github.com/os2display. __NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
+You should use the scripts/setup\_htdocs.sh script to create the htdocs folder which clones the repositories from http://github.com/os2display. __NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
 
 <pre>
- ./setup_htdocs.sh
+ scripts/setup_htdocs.sh
 </pre>
 
 Start the vagrant.

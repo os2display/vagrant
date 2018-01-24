@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../ && pwd)
 
 mkdir -p $dir/htdocs
 cd $dir/htdocs
