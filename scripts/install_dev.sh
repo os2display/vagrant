@@ -6,6 +6,12 @@ script_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../htdocs/admin && pwd)
 bundles_dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../htdocs/bundles && pwd)
 
+if [[ $(whoami) != "vagrant" ]]
+then
+		echo "Please run this script from inside your vagrant box."
+		exit
+fi
+
 echo "${bold}composer install'ing local bundles${normal}"
 
 cd $dir
