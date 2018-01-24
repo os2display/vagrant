@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 script_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../htdocs/ && pwd)
 
 get_bundles() {
-	bundles_dir=$dir/bundles/
+	bundles_dir=$dir/bundles
 	mkdir -p $bundles_dir/$name
 	cd $bundles_dir/$name
 	for bundle in ${bundles[@]}; do
 		tokens=(${bundle//@/ })
 		repo=${tokens[0]}
 		branch=${tokens[1]:-master}
-		echo $name/$repo@$branch
+		echo "${bold}$name/$repo@$branch -> $bundles_dir/$name/$repo${normal}"
 		if [ ! -d $repo ]; then
 				git clone https://github.com/$name/$repo.git
 		fi
@@ -48,6 +51,7 @@ bundles=(
 get_bundles
 
 cat <<EOF
+
 To install stuff, run:
 
  $script_dir/install_dev.sh
