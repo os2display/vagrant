@@ -1,5 +1,9 @@
-mkdir htdocs
-cd htdocs
+#!/usr/bin/env bash
+dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+
+mkdir -p $dir/htdocs
+cd $dir/htdocs
+
 git clone git@github.com:search-node/search_node.git search_node
 
 git clone git@github.com:itk-os2display/docs.git docs
@@ -7,8 +11,11 @@ git clone git@github.com:itk-os2display/admin.git admin
 git clone git@github.com:itk-os2display/middleware.git middleware
 git clone git@github.com:itk-os2display/screen.git screen
 
-cd admin/src
+cat <<EOF
+Run
 
-./setup_src.sh
+  $dir/scripts/install_bundles.sh
 
-cd ../../..
+to clone bundles needed for development.
+
+EOF
