@@ -14,6 +14,7 @@ if [ -z "$branch" ]; then
 Usage: $0 <branch>
 
 EOF
+		exit
 fi
 
 for d in $bundles_dir/*/*; do
