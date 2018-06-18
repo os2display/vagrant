@@ -1,0 +1,28 @@
+---
+- name: Install
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - php7.2-common
+    - php7.2-cgi
+    - php7.2
+  tags: php7
+
+- name: Install extensions
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items: "{{ extensions }}"
+  tags: php7
+
+- name: Configure - CLI php.ini
+  replace:
+    dest=/etc/php/7.2/cli/php.ini
+    regexp="{{ item.regexp }}"
+    replace="{{ item.replace }}"
+    backup=yes
+  with_items:
+    - { regexp: ';date.timezone =', replace: 'date.timezone = Europe/Copenhagen' }
+    - { regexp: '^short_open_tag =$', replace: 'short_open_tag = Off' }
+  tags: php7
+
+- name: Configure opcache
+  template: src=opcache.ini.j2 dest=/etc/php/7.2/mods-available/opcache.ini backup=yes
+  tags: php7

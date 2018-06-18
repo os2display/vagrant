@@ -1,87 +1,5 @@
 #!/usr/bin/env bash
 
-# APT
-echo "Updating APT"
-apt-get update > /dev/null 2>&1
-
-# Set timezone.
-echo "Setting up timezone..."
-echo "Europe/Copenhagen" > /etc/timezone
-/usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata > /dev/null 2>&1
-
-# Set locale
-echo "Setting up locale..."
-echo en_GB.UTF-8 UTF-8 > /etc/locale.gen
-echo en_DK.UTF-8 UTF-8 >> /etc/locale.gen
-echo da_DK.UTF-8 UTF-8 >> /etc/locale.gen
-/usr/sbin/locale-gen > /dev/null 2>&1
-export LANGUAGE=en_DK.UTF-8 > /dev/null 2>&1
-export LC_ALL=en_DK.UTF-8 > /dev/null 2>&1
-/usr/sbin/dpkg-reconfigure --frontend noninteractive locales > /dev/null 2>&1
-
-# Add dotdeb
-cat > /etc/apt/sources.list.d/dotdeb.list <<DELIM
-deb http://packages.dotdeb.org wheezy all
-deb-src http://packages.dotdeb.org wheezy all
-
-deb http://packages.dotdeb.org wheezy-php56 all
-deb-src http://packages.dotdeb.org wheezy-php56 all
-DELIM
-wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
-apt-key add dotdeb.gpg  > /dev/null 2>&1
-rm dotdeb.gpg
-apt-get update > /dev/null 2>&1
-
-# Mysql
-echo "Configuring mysql"
-debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password vagrant' > /dev/null 2>&1
-debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password vagrant' > /dev/null 2>&1
-
-apt-get install -y mysql-server > /dev/null 2>&1
-
-# PHP5
-echo "Installing php"
-apt-get install -y php5-fpm php5-cli php5-xdebug php5-mysql php5-curl php5-gd git > /dev/null 2>&1
-# Used by os2display bundle tests
-apt-get install -y php5-sqlite > /dev/null 2>&1
-
-sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/cli/php.ini
-sed -i '/;date.timezone =/c date.timezone = Europe/Copenhagen' /etc/php5/fpm/php.ini
-
-sed -i '/upload_max_filesize = 2M/cupload_max_filesize = 256M' /etc/php5/fpm/php.ini
-sed -i '/post_max_size = 8M/cpost_max_size = 300M' /etc/php5/fpm/php.ini
-
-sed -i '/;listen.owner = www-data/c listen.owner = vagrant' /etc/php5/fpm/pool.d/www.conf
-sed -i '/;listen.group = www-data/c listen.group = vagrant' /etc/php5/fpm/pool.d/www.conf
-sed -i '/;listen.mode = 0660/c listen.mode = 0660' /etc/php5/fpm/pool.d/www.conf
-
-# Set php memory limit to 256mb
-sed -i '/memory_limit = 128M/c memory_limit = 256M' /etc/php5/fpm/php.ini
-
-# Redis
-echo "Installing redis"
-apt-get install -y redis-server > /dev/null 2>&1
-
-# Memcache
-echo "Installing memcache"
-apt-get install -y memcached php5-memcached > /dev/null 2>&1
-
-# APC
-echo "Configuring APC"
-apt-get install -y php-apc > /dev/null 2>&1
-
-cat > /etc/php5/fpm/conf.d/apc.ini <<DELIM
-apc.enabled=1
-apc.shm_segments=1
-apc.optimization=0
-apc.shm_size=64M
-apc.ttl=7200
-apc.user_ttl=7200
-apc.num_files_hint=1024
-apc.mmap_file_mask=/tmp/apc.XXXXXX
-apc.enable_cli=1
-apc.cache_by_default=1
-DELIM
 
 # x-debug
 echo "Configure x-debug"
@@ -442,14 +360,6 @@ window.config = {
 };
 DELIM
 
-# NodeJS
-echo "Installing nodejs"
-wget https://deb.nodesource.com/setup_4.x -O /tmp/node_install.sh
-chmod 700 /tmp/node_install.sh
-/tmp/node_install.sh
-apt-get update > /dev/null 2>&1
-apt-get install -y nodejs > /dev/null 2>&1
-
 # Search node requirements
 echo "Installing search_node requirements"
 su vagrant -c "cd /vagrant/htdocs/search_node && ./install.sh" > /dev/null 2>&1
@@ -571,123 +481,9 @@ cat > /vagrant/htdocs/search_node/apikeys.json <<DELIM
 }
 DELIM
 
-# Search Node service script
-echo "Setting up search_node service"
-cat > /etc/init.d/search_node <<DELIM
-#!/bin/sh
-
-NODE_APP='app.js'
-APP_DIR='/vagrant/htdocs/search_node';
-PID_FILE=\$APP_DIR/app.pid
-LOG_FILE=\$APP_DIR/app.log
-NODE_EXEC=\`which node\`
-
-###############
-# chkconfig: - 58 74
-# description: node-app is the script for starting a node app on boot.
-### BEGIN INIT INFO
-# Provides: search_node
-# Required-Start:    \$network \$remote_fs \$local_fs
-# Required-Stop:     \$network \$remote_fs \$local_fs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: start and stop node
-# Description: Node process for app
-### END INIT INFO
-
-start_app (){
-    if [ -f \$PID_FILE ]
-    then
-        PID=\`cat $PID_FILE\`
-        if ps -p \$PID > /dev/null; then
-            echo "\$PID_FILE exists, process is already running"
-            exit 1
-        else
-            rm \$PID_FILE
-            start_app
-        fi
-    else
-        echo "Starting node app..."
-        if [ ! -d \$APP_DIR ]
-        then
-            sleep 30
-        fi
-        cd \$APP_DIR
-        \$NODE_EXEC \$APP_DIR/\$NODE_APP  1>\$LOG_FILE 2>&1 &
-        echo \$! > \$PID_FILE;
-    fi
-}
-
-stop_app (){
-    if [ ! -f \$PID_FILE ]
-    then
-        echo "\$PID_FILE does not exist, process is not running"
-        exit 1
-    else
-        echo "Stopping \$APP_DIR/\$NODE_APP ..."
-        echo "Killing \`cat \$PID_FILE\`"
-        kill \`cat \$PID_FILE\`;
-        rm -f \$PID_FILE;
-        echo "Node stopped"
-    fi
-}
-
-case "\$1" in
-    start)
-        start_app
-    ;;
-
-    stop)
-        stop_app
-    ;;
-
-    restart)
-        stop_app
-        start_app
-    ;;
-
-    status)
-        if [ -f \$PID_FILE ]
-        then
-            PID=\`cat \$PID_FILE\`
-            if [ -z "\`ps ef | awk '{print \$1}' | grep "^\$PID\$"\`" ]
-            then
-                echo "Node app stopped but pid file exists"
-            else
-                echo "Node app running with pid \$PID"
-
-            fi
-        else
-            echo "Node app stopped"
-        fi
-    ;;
-
-    *)
-        echo "Usage: \$0 {start|stop|restart|status}"
-        exit 1
-    ;;
-esac
-DELIM
-chmod +x /etc/init.d/search_node
-
-# Make middleware service
-echo "Making middleware service"
-cp /etc/init.d/search_node /etc/init.d/middleware
-sed -i 's/search_node/middleware/g' /etc/init.d/middleware
-
-# Update rc
-update-rc.d middleware defaults > /dev/null 2>&1
-update-rc.d search_node defaults > /dev/null 2>&1
-
 # Create database
 echo "Setting up database os2display"
 echo "create database os2display" | mysql -uroot -pvagrant > /dev/null 2>&1
-
-# Get composer
-echo "Setting up composer"
-cd /vagrant/htdocs/admin
-curl -sS http://getcomposer.org/installer | php  > /dev/null 2>&1
-mv /vagrant/htdocs/admin/composer.phar /usr/local/bin/composer
 
 # Config file for admin_os2display
 cat > /vagrant/htdocs/admin/app/config/parameters.yml <<DELIM
@@ -785,7 +581,6 @@ update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1
 
 # Elasticsearch plugins
 /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.5.0 > /dev/null 2>&1
-/usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head > /dev/null 2>&1
 
 # Install gulp
 npm install --global gulp > /dev/null 2>&1
@@ -794,27 +589,6 @@ su --login vagrant -c "cd /vagrant/htdocs/screen && npm install" > /dev/null 2>&
 
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
-
-echo "Starting php5-fpm"
-service php5-fpm restart > /dev/null 2>&1
-
-echo "Starting nginx"
-service nginx restart > /dev/null 2>&1
-
-echo "Starting mysql"
-service mysql start > /dev/null 2>&1
-
-echo "Starting ElasticSearch"
-service elasticsearch restart > /dev/null 2>&1
-
-echo "Starting redis"
-service redis-server restart > /dev/null 2>&1
-
-echo "Starting search_node"
-service search_node start > /dev/null 2>&1
-
-echo "Starting middleware"
-service middleware start > /dev/null 2>&1
 
 echo "Adding crontab"
 crontab -l > mycron

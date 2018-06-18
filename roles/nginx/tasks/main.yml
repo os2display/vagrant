@@ -1,0 +1,35 @@
+---
+- name: Install
+  apt: pkg=nginx state=latest update_cache=yes
+  tags: nginx
+
+- name: Create vagrant sites
+  template:
+    src=nginx-{{ item.project_type }}-vagrant.j2
+    dest=/etc/nginx/sites-available/{{ item.domain }}
+  with_items: "{{ sites | default([{'domain':'vagrant'}]) }}"
+  tags:
+    - nginx
+    - sites
+
+- name: Enable vagrant sites
+  file:
+    src=/etc/nginx/sites-available/{{ item.domain }}
+    dest=/etc/nginx/sites-enabled/{{ item.domain }}
+    state=link
+  with_items: "{{ sites | default([{'domain':'vagrant'}]) }}"
+  notify:
+    - reload nginx
+  tags:
+    - nginx
+    - sites
+
+- name: Disable default site
+  file:
+    path=/etc/nginx/sites-enabled/default
+    state=absent
+  tags: nginx
+
+- name: Ensure nginx is running
+  service: name=nginx state=started
+  tags: nginx

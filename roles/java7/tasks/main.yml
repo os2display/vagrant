@@ -1,0 +1,12 @@
+---
+- name: Add repository for Ubuntu
+  become: true
+  apt_repository: repo="ppa:openjdk-r/ppa"
+  tags: 
+    - java7
+
+- name: Install Server
+  apt: pkg=openjdk-7-jre state=latest update_cache=yes
+  tags:
+    - java7
+

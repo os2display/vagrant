@@ -1,0 +1,4 @@
+---
+- name: Install
+  get_url: url=http://getcomposer.org/composer.phar dest={{ path }} owner=root group=root mode=0755
+  tags: composer

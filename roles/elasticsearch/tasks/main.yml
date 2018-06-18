@@ -1,0 +1,19 @@
+- name: Download
+  get_url: url="https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ es_version }}.deb" dest="/tmp/elasticsearch.deb"
+  tags: elasticsearch
+
+- name: Install
+  apt: deb="/tmp/elasticsearch.deb"
+  tags: elasticsearch
+
+- name: Setup run-level
+  command: "update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1"
+  tags: elasticsearch
+
+- name: Setup ICU
+  command: "/usr/share/elasticsearch/bin/plugin install elasticsearch/elasticsearch-analysis-icu/2.5.0"
+  tags: elasticsearch
+
+- name: Ensure service is running
+  service: name=elasticsearch state=started
+  tags: elasticsearch
