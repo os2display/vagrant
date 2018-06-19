@@ -4,27 +4,17 @@
   vars:
     php_version: "5.6"
     es_version: "1.7.1"
-    mysql_root_password: vagrant
+    mysql_root_password: "vagrant"
     node_major_version: 6
-    sites:
-      - domain: admin.os2display.vm
-        document_root: /vagrant/htdocs/admin/public
-        project_type: symfony
-      - domain: search.os2display.vm
-        document_root: /vagrant/htdocs/search_node
-        project_type: node
-      - domain: middleware.os2display.vm
-        document_root: /vagrant/htdocs/middleware
-        project_type: node
-      - domain: screen.os2display.vm
-        document_root: /vagrant/htdocs/screen
-        project_type: default
+    domain: "os2display.vm"
 
   pre_tasks:
     # Tasks that shold be run before roles.
 
   post_tasks:
     # Tasks that shold be run after roles.
+    - include: tasks/nginx.yml
+    - include: tasks/sites.yml
 
   roles:
     - common

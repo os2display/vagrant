@@ -4,6 +4,7 @@
   with_items:
     - php7.2-common
     - php7.2-cgi
+    - php7.2-fpm
     - php7.2
   tags: php7
 
