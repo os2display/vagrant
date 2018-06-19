@@ -1,9 +1,11 @@
 #!/bin/bash
 
 cd /vagrant/htdocs/search_node && ./install.sh
-cd /vagrant/htdocs/middlware && ./install.sh
+cd /vagrant/htdocs/middleware && ./install.sh
 
 echo "create database os2display" | mysql -uroot -pvagrant
+
+# Fix developer setup
 
 cd /vagrant/htdocs/admin/ && composer install
 cd /vagrant/htdocs/admin/ && app/console doctrine:migrations:migrate --no-interaction

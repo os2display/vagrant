@@ -12,13 +12,21 @@ To enable one vagrant to have more than one alias (domain) you need to install t
 vagrant plugin install vagrant-hostsupdater
 </pre>
 
-# Installation.
-You should use the scripts/setup\_htdocs.sh script to create the htdocs folder which clones the repositories from http://github.com/os2display. _
-_NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
+# Installation
+You should use the install.sh script to create the htdocs folder which clones the repositories from http://github.com/itk-os2display.
+
+__NOTE__: It's important that you have clone the repositories into the htdocs folder before trying to boot the vagrant, as it uses configuration files located in the repositories during setup.
 
 <pre>
-scripts/setup_htdocs.sh
-scripts/install_bundles.sh
+install.sh
+</pre>
+
+## Development version
+I you want to run in development mode. Run the following scripts.
+
+<pre>
+/scripts/dev_setup.sh
+/scripts/dev_config.sh
 </pre>
 
 Start the vagrant.
@@ -26,13 +34,14 @@ Start the vagrant.
 vagrant up
 </pre>
 
-Run install_dev script inde fra vagranten:
+Run scripts/site_setup.sh script inde fra vagranten:
 
 <pre>
 vagrant ssh
-scripts/install_dev.sh
+/vagrant/scripts/site_setup.sh
 </pre>
 
+## Setup search
 When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab. Then click the _activate_ links foreach index.
 
 # Troubleshoot
