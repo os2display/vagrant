@@ -17,11 +17,10 @@ crontab mycron
 rm mycron
 
 # Fix /etc/hosts
-echo "Add *.os2display.vm to hosts"
-echo "127.0.1.1 screen.os2display.vm" >> /etc/hosts
-echo "127.0.1.1 admin.os2display.vm" >> /etc/hosts
-echo "127.0.1.1 search.os2display.vm" >> /etc/hosts
-echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts
+sudo echo "127.0.1.1 screen.os2display.vm" >> /etc/hosts
+sudo echo "127.0.1.1 admin.os2display.vm" >> /etc/hosts
+sudo echo "127.0.1.1 search.os2display.vm" >> /etc/hosts
+sudo echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts
 
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
