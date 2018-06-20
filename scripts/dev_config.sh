@@ -35,5 +35,6 @@ done
 
 # Install packages.
 cd $dir
+rm -rf vendor/*
 COMPOSER=composer-dev.json composer install
 cd ../..

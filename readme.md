@@ -21,24 +21,24 @@ __NOTE__: It's important that you have clone the repositories into the htdocs fo
 install.sh
 </pre>
 
-## Development version
-I you want to run in development mode. Run the following scripts.
-
-<pre>
-/scripts/dev_setup.sh
-/scripts/dev_config.sh
-</pre>
-
 Start the vagrant.
 <pre>
 vagrant up
 </pre>
 
-Run scripts/site_setup.sh script inde fra vagranten:
+Run `scripts/site_setup.sh` script inde fra vagranten:
 
 <pre>
 vagrant ssh
 /vagrant/scripts/site_setup.sh
+</pre>
+
+## Development version
+I you want to run in development mode. Run the following scripts.
+
+<pre>
+scripts/dev_setup.sh
+scripts/dev_config.sh
 </pre>
 
 ## Setup search
