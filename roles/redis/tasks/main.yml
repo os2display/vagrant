@@ -1,0 +1,8 @@
+---
+- name: Install
+  apt: name=redis-server state=latest update_cache=yes
+  tags: redis
+
+- name: Ensure service is running
+  service: name=redis-server state=started
+  tags: redis

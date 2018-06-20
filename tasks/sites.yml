@@ -1,0 +1,24 @@
+---
+- name: Configure "screen"
+  template: src=screen-javascript.j2 dest=/vagrant/htdocs/screen/app/config.js backup=yes
+  tags: sites
+
+- name: Configure "middleware"
+  template: src=nodejs-middleware.j2 dest=/vagrant/htdocs/middleware/config.json backup=yes
+  tags: sites
+
+- name: Configure "middleware"
+  template: src=nodejs-middleware-keys.j2 dest=/vagrant/htdocs/middleware/apikeys.json backup=yes
+  tags: sites
+
+- name: Configure "search"
+  template: src=nodejs-search-mapping.j2 dest=/vagrant/htdocs/search_node/mappings.json backup=yes
+  tags: sites
+
+- name: Configure "middleware"
+  template: src=nodejs-search-keys.j2 dest=/vagrant/htdocs/search_node/apikeys.json backup=yes
+  tags: sites
+
+- name: Configure "admin"
+  template: src=symfony-parameters.j2 dest=/vagrant/htdocs/admin/app/config/parameters.yml backup=yes
+  tags: sites

@@ -1,0 +1,11 @@
+---
+- name: Add repository for Ubuntu
+  become: true
+  apt_repository: repo="ppa:ondrej/php"
+  tags: php7
+
+- name: apt update after php
+  action: apt update_cache=yes
+  tags: php7
+
+- import_tasks: php.yml

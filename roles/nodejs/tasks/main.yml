@@ -1,0 +1,19 @@
+---
+- name: Install prerequisite
+  apt: pkg={{ item }} update_cache=yes
+  with_items:
+    - build-essential
+    - curl
+  tags: nodejs
+
+- name: Download install script
+  get_url: url=https://deb.nodesource.com/setup_{{ node_major_version | default(6) }}.x dest=/tmp/node_install mode=0700
+  tags: nodejs
+
+- name: Add apt repository
+  command: /tmp/node_install
+  tags: nodejs
+
+- name: Install NodeJS
+  apt: name=nodejs state=present
+  tags: nodejs
