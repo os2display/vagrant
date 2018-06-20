@@ -29,7 +29,7 @@ sudo sh -c 'echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts'
 ln -s /vagrant/htdocs/ /home/vagrant
 
 # Add supervisor conf
-sudo cp /vagrant/templates/supervisor-job-queue.j2 /etc/supervisor/conf.d/job-queue-admin.conf
+sudo cp /vagrant/templates/supervisor-job-queue.j2 /etc/supervisor/conf.d/job_queue_admin.conf
 sudo cp /vagrant/templates/supervisor-middleware.j2 /etc/supervisor/conf.d/middleware.conf
 sudo cp /vagrant/templates/supervisor-search_node.j2 /etc/supervisor/conf.d/search_node.conf
 sudo service supervisor restart
