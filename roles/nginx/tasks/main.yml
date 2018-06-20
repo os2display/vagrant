@@ -1,0 +1,14 @@
+---
+- name: Install
+  apt: pkg=nginx state=latest update_cache=yes
+  tags: nginx
+
+- name: Disable default site
+  file:
+    path=/etc/nginx/sites-enabled/default
+    state=absent
+  tags: nginx
+
+- name: Ensure nginx is running
+  service: name=nginx state=started
+  tags: nginx

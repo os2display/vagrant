@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
+# Checks out the branch for all packages.
+
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-script_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../htdocs/ && pwd)
-bundles_dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../htdocs/bundles && pwd)
+packages_dir=$(cd $(dirname "${BASH_SOURCE[0]}")/../packages && pwd)
 
 branch="$1"
 
@@ -17,7 +17,7 @@ EOF
 		exit
 fi
 
-for d in $bundles_dir/*/*; do
+for d in $packages_dir/*/*; do
 	echo "${bold}$d${normal}"
 	git -C $d fetch
 	git -C $d rev-parse --quiet --verify "$branch" 2>&1 > /dev/null

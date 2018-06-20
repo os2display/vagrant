@@ -1,0 +1,3 @@
+---
+php_executable: /usr/bin/php
+composer_path: /usr/bin/composer
