@@ -23,7 +23,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.hostsupdater.aliases = [
     # Add additional hostnames here.
     "admin.os2display.vm",
-    "screen.os2display",
+    "screen.os2display.vm",
     "middleware.os2display.vm",
     "search.os2display.vm"
   ]
