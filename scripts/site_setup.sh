@@ -6,16 +6,16 @@ cd /vagrant/htdocs/middleware && ./install.sh
 echo "create database os2display" | mysql -uroot
 
 cd /vagrant/htdocs/admin/ && composer install
-cd /vagrant/htdocs/admin/ && app/console doctrine:migrations:migrate --no-interaction
+cd /vagrant/htdocs/admin/ && bin/console doctrine:migrations:migrate --no-interaction
 
 # Add admin user
-cd /vagrant/htdocs/admin/ && app/console fos:user:create admin admin@admin.os2display.vm admin --super-admin
+cd /vagrant/htdocs/admin/ && bin/console fos:user:create admin admin@admin.os2display.vm admin --super-admin
 
 cp /vagrant/htdocs/search_node/example.config.json /vagrant/htdocs/search_node/config.json
 
 echo "Adding crontab"
 crontab -l > mycron
-echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console os2display:core:cron" >> mycron
+echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/bin/console os2display:core:cron" >> mycron
 crontab mycron
 rm mycron
 

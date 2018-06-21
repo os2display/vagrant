@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   vars:
-    php_version: "5.6"
+    php_version: "7.2"
     es_version: "1.7.1"
     mysql_root_password: "vagrant"
     node_major_version: 6
@@ -20,7 +20,7 @@
     - common
     - mariadb_server
     - nginx
-    - php56
+    - php72
     - composer
     - nodejs
     - memcached

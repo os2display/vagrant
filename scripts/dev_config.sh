@@ -34,7 +34,8 @@ for vendor_dir in $packages_dir/*/ ; do
 done
 
 # Install packages.
+rm -rf $dir/vendor/
+
 cd $dir
-rm -rf vendor/*
 COMPOSER=composer-dev.json composer install
 cd ../..
