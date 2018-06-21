@@ -20,5 +20,5 @@
   tags: sites
 
 - name: Configure "admin"
-  template: src=symfony-env.j2 dest=/vagrant/htdocs/admin/.env backup=yes
+  template: src=symfony-parameters.j2 dest=/vagrant/htdocs/admin/app/config/parameters.yml backup=yes
   tags: sites
