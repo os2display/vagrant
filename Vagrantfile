@@ -28,6 +28,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "search.os2display.vm"
   ]
 
+  config.bindfs.bind_folder '/vagrant', '/vagrant'
+
   # What to install
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "playbook.yml"
