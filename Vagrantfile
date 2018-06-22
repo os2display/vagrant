@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     :mount_options => ['actimeo=2']
 
   # Timeout if box hangs
-  config.vm.boot_timeout = 30
+  config.vm.boot_timeout = 60
 
   # Hostname(s)
   config.vm.hostname = "os2display.vm"
