@@ -1,0 +1,29 @@
+---
+- name: Install
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - php5.6-common
+    - php5.6-cgi
+    - php5.6-fpm
+    - php5.6
+  tags: php56
+
+- name: Install extensions
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items: "{{ extensions }}"
+  tags: php56
+
+- name: Configure - CLI php.ini
+  replace:
+    dest=/etc/php/5.6/cli/php.ini
+    regexp="{{ item.regexp }}"
+    replace="{{ item.replace }}"
+    backup=yes
+  with_items:
+    - { regexp: ';date.timezone =', replace: 'date.timezone = Europe/Copenhagen' }
+    - { regexp: '^short_open_tag =$', replace: 'short_open_tag = Off' }
+  tags: php56
+
+- name: Configure opcache
+  template: src=opcache.ini.j2 dest=/etc/php/5.6/mods-available/opcache.ini backup=yes
+  tags: php56

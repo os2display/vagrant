@@ -1,4 +1,6 @@
 # Introduction
+This vagrant development setup for os2display is built with ansible.
+
 This vagrant provides the setup for a local version of the os2display server setup.
 
  * It installs nginx, php, mysql, symfony, nodejs, redis, etc.
