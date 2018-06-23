@@ -18,8 +18,8 @@
 
   roles:
     - common
-    - mysql
-#    - mariadb_server
+#    - mysql
+    - mariadb_server
     - nginx
     - php72
 #    - php56
