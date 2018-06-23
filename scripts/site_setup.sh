@@ -37,3 +37,4 @@ sudo service supervisor restart
 # Change nginx user and group to vagrant to avoid permission issues.
 sudo sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
 sudo sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+sudo service php7.2-fpm restart
