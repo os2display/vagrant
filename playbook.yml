@@ -18,14 +18,13 @@
 
   roles:
     - common
-#    - mysql
     - mariadb_server
     - nginx
     - php72
-#    - php56
     - composer
     - nodejs
     - memcached
     - redis
     - java7
     - elasticsearch
+#    - php56

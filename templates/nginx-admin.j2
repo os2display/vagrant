@@ -33,7 +33,7 @@ server {
   # This rule should only be placed on your development environment
   # In production, don't include this and don't deploy app_dev.php or config.php
   location ~ ^/(app_dev|config)\.php(/|$) {
-    fastcgi_pass unix:/var/run/php/php5.6-fpm.sock;
+    fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
     fastcgi_split_path_info ^(.+\.php)(/.*)$;
     include fastcgi_params;
     # When you are using symlinks to link the document root to the
@@ -49,7 +49,7 @@ server {
 
   # PROD
     location ~ ^/app\.php(/|$) {
-    fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+    fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
     fastcgi_split_path_info ^(.+\.php)(/.*)$;
     include fastcgi_params;
     # When you are using symlinks to link the document root to the
@@ -65,14 +65,6 @@ server {
     # http://domain.tld/app.php/some-path
     # Remove the internal directive to allow URIs like this
     internal;
-  }
-
-  location ~ ^/(app|app_dev|config)\.php(/|$) {
-    fastcgi_pass unix:/var/run/php/php{{php_version}}-fpm.sock;
-    fastcgi_split_path_info ^(.+\.php)(/.*)$;
-    include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    fastcgi_param HTTPS off;
   }
 
   # deny access to .htaccess files, if Apache's document root
