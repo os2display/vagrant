@@ -19,12 +19,6 @@ echo "*/1 * * * * /usr/bin/php /vagrant/htdocs/admin/app/console os2display:core
 crontab mycron
 rm mycron
 
-# Fix /etc/hosts
-sudo sh -c 'echo "127.0.1.1 screen.os2display.vm" >> /etc/hosts'
-sudo sh -c 'echo "127.0.1.1 admin.os2display.vm" >> /etc/hosts'
-sudo sh -c 'echo "127.0.1.1 search.os2display.vm" >> /etc/hosts'
-sudo sh -c 'echo "127.0.1.1 middleware.os2display.vm" >> /etc/hosts'
-
 # Add symlink.
 ln -s /vagrant/htdocs/ /home/vagrant
 
