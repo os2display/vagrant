@@ -11,6 +11,9 @@ cd /vagrant/htdocs/admin/ && bin/console doctrine:migrations:migrate --no-intera
 # Add admin user
 cd /vagrant/htdocs/admin/ && bin/console fos:user:create admin admin@admin.os2display.vm admin --super-admin
 
+# Import templates
+cd /vagrant/htdocs/admin/ && bin/console os2display:core:templates:load
+
 cp /vagrant/htdocs/search_node/example.config.json /vagrant/htdocs/search_node/config.json
 
 echo "Adding crontab"
