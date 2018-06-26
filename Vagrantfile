@@ -28,6 +28,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "search.os2display.vm"
   ]
 
+  config.vm.provision "shell", inline: <<-SHELL
+    sed -i '$ a 127.0.1.1 screen.os2display.vm admin.os2display.vm search.os2display.vm middleware.os2display.vm' /etc/hosts
+  SHELL
+
   config.bindfs.bind_folder '/vagrant', '/vagrant'
 
   # What to install

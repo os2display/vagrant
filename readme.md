@@ -43,17 +43,26 @@ scripts/dev_setup.sh
 scripts/dev_config.sh
 </pre>
 
-## Setup search
-When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab. Then click the _activate_ links foreach index.
+## Fake certificate errors in browser
+Since we use self-signed certificated in this vagrant setup, you will need to accept the certificates in the browser, by visiting:
+
+* screen.os2display.vm
+* admin.os2display.vm
+* search.os2display.vm
+* middleware.os2display.vm
+
+And accepting the certificates.
+
+## Search errors in admin
+Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
+Create one of each type of content (channel,slide,screen,media) to fix this error.
 
 # Troubleshoot
 
-## How to start / restart middleware and search
-If you restart your vagrant the search node and middleware might not start automatically or if the code is updated you need to restart them,
-<pre>
-sudo service search_node start/stop
-sudo service middleware start/stop
-</pre>
+## Setup search
+If the indexes are not activated by the `scripts/activate_search_indexes.sh` script, do the following:
+When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab.
+Then click the _activate_ links foreach index.
 
 ## MySQL access
 If you need to access the database from outside the VM with e.g. _Sequel Pro_ or any other SQL client that can connect via SSH the following can be used.
@@ -61,7 +70,7 @@ If you need to access the database from outside the VM with e.g. _Sequel Pro_ or
 Name: os2display
 MySQL Host: 127.0.0.1
 Username: root
-Password: vagrant
+Password: 
 SSH Host: admin.os2display.vm
 SSH User: vagrant
 SSH Key: ~/.vagrant.d/insecure_private_key
