@@ -38,6 +38,3 @@ sudo service supervisor restart
 sudo sed -i 's/user = www-data/user = vagrant/g' /etc/php/5.6/fpm/pool.d/www.conf
 sudo sed -i 's/group = www-data/group = vagrant/g' /etc/php/5.6/fpm/pool.d/www.conf
 sudo service php5.6-fpm restart
-
-# Activate search indexes.
-/vagrant/scripts/activate_search_indexes.sh

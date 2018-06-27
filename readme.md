@@ -35,12 +35,10 @@ vagrant ssh
 /vagrant/scripts/site_setup.sh
 </pre>
 
-## Development version
-I you want to run in development mode. Run the following scripts.
+Activate the search indexes:
 
 <pre>
-scripts/dev_setup.sh
-scripts/dev_config.sh
+/vagrant/scripts/activate_search_indexes.sh
 </pre>
 
 ## Fake certificate errors in browser
@@ -56,6 +54,14 @@ And accepting the certificates.
 ## Search errors in admin
 Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
 Create one of each type of content (channel,slide,screen,media) to fix this error.
+
+## Development version
+I you want to run in development mode. Run the following scripts.
+
+<pre>
+scripts/dev_setup.sh
+scripts/dev_config.sh
+</pre>
 
 # Troubleshoot
 
