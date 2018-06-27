@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # IP
-  config.vm.network "private_network", ip: "192.168.50.199"
+  config.vm.network "private_network", ip: "192.168.50.129"
 
   # Shared folder
   config.vm.synced_folder ".", "/vagrant",
