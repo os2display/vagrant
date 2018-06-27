@@ -3,6 +3,9 @@
 cd /vagrant/htdocs/search_node && ./install.sh
 cd /vagrant/htdocs/middleware && ./install.sh
 
+# Make sure middleware/logs is created
+mkdir /vagrant/middleware/logs
+
 echo "create database os2display" | mysql -uroot
 
 cd /vagrant/htdocs/admin/ && composer install
