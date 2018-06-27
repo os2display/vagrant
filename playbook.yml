@@ -18,9 +18,8 @@
 
   roles:
     - common
-    - mariadb_server
+    - mysql
     - nginx
-#    - php72
     - php56
     - composer
     - nodejs
@@ -28,3 +27,5 @@
     - redis
     - java7
     - elasticsearch
+#    - mariadb_server
+#    - php72
