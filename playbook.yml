@@ -20,6 +20,7 @@
     - common
     - mariadb_server
     - nginx
+#    - php72
     - php56
     - composer
     - nodejs

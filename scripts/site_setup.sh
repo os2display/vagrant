@@ -11,6 +11,9 @@ cd /vagrant/htdocs/admin/ && app/console doctrine:migrations:migrate --no-intera
 # Add admin user
 cd /vagrant/htdocs/admin/ && app/console fos:user:create admin admin@admin.os2display.vm admin --super-admin
 
+# Import templates
+cd /vagrant/htdocs/admin/ && app/console os2display:core:templates:load
+
 cp /vagrant/htdocs/search_node/example.config.json /vagrant/htdocs/search_node/config.json
 
 echo "Adding crontab"
@@ -27,3 +30,11 @@ sudo cp /vagrant/templates/supervisor-job-queue.j2 /etc/supervisor/conf.d/job_qu
 sudo cp /vagrant/templates/supervisor-middleware.j2 /etc/supervisor/conf.d/middleware.conf
 sudo cp /vagrant/templates/supervisor-search_node.j2 /etc/supervisor/conf.d/search_node.conf
 sudo service supervisor restart
+
+# Change nginx user and group to vagrant to avoid permission issues.
+sudo sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+sudo sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+sudo service php7.2-fpm restart
+
+# Activate search indexes.
+/vagrant/scripts/activate_search_indexes.sh

@@ -15,7 +15,7 @@
   template: src=nodejs-search-mapping.j2 dest=/vagrant/htdocs/search_node/mappings.json backup=yes
   tags: sites
 
-- name: Configure "middleware"
+- name: Configure "search"
   template: src=nodejs-search-keys.j2 dest=/vagrant/htdocs/search_node/apikeys.json backup=yes
   tags: sites
 
