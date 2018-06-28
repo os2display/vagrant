@@ -58,10 +58,6 @@ Since we use self-signed certificated in this vagrant setup, you will need to ac
 
 And accepting the certificates.
 
-## Search errors in admin
-Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
-Create one of each type of content (channel,slide,screen,media) to fix this error.
-
 ## Development version
 I you want to run in development mode. Run the following scripts.
 
@@ -73,9 +69,16 @@ scripts/dev_config.sh
 # Troubleshoot
 
 ## Setup search
-If the indexes are not activated by the `scripts/activate_search_indexes.sh` script, do the following:
+If the indexes are not activated by the `scripts/search_activate.sh` script, do the following:
+
 When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab.
 Then click the _activate_ links foreach index.
+
+## Search errors in admin
+If the indexes are not initialized by the `scripts/search_initialize.sh` script, do the following:
+
+Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
+Create one of each type of content (channel,slide,screen,media) to fix this error.
 
 ## MySQL access
 If you need to access the database from outside the VM with e.g. _Sequel Pro_ or any other SQL client that can connect via SSH the following can be used.
