@@ -3,7 +3,7 @@ This vagrant development setup for os2display is built with ansible.
 
 This vagrant provides the setup for a local version of the os2display server setup.
 
- * Ubuntu.
+ * Runs Ubuntu.
  * It installs nginx, php, mysql, symfony, nodejs, redis, etc.
  * It installs a database "os2display" for the symfony backend.
  * Afterwards it starts up the search and middleware nodejs apps.
@@ -93,5 +93,6 @@ SSH Key: ~/.vagrant.d/insecure_private_key
 </pre>
 
 ## Logs
- * The middleware and search node have logs in their root folders _/vagrant/htdocs/search_node_ and _/vagrant/htdocs/middleware_
+ * The middleware and search node have logs in their logs folders _/vagrant/htdocs/search_node/logs_ and _/vagrant/htdocs/middleware/logs_
  * Nginx have logs in _/var/log/nginx_
+ * Supervisor logs in _/var/log/supervisor_
