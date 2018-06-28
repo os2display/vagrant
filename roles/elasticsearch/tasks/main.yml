@@ -7,7 +7,7 @@
   tags: elasticsearch
 
 - name: Setup run-level
-  command: "update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1"
+  command: "sudo systemctl enable elasticsearch.service > /dev/null 2>&1"
   tags: elasticsearch
 
 - name: Setup ICU
