@@ -17,6 +17,10 @@ cd /vagrant/htdocs/admin/ && app/console fos:user:create admin admin@admin.os2di
 # Import templates
 cd /vagrant/htdocs/admin/ && app/console os2display:core:templates:load
 
+# Enable 1 screen template and 1 slide template
+cd /vagrant/htdocs/admin/ && app/console doctrine:query:sql "UPDATE ik_screen_templates SET enabled=1 WHERE id = 'full-screen';"
+cd /vagrant/htdocs/admin/ && app/console doctrine:query:sql "UPDATE ik_slide_templates SET enabled=1 WHERE id = 'only-image';"
+
 cp /vagrant/htdocs/search_node/example.config.json /vagrant/htdocs/search_node/config.json
 
 echo "Adding crontab"
