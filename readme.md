@@ -39,7 +39,13 @@ vagrant ssh
 Activate the search indexes:
 
 <pre>
-/vagrant/scripts/activate_search_indexes.sh
+/vagrant/scripts/search_activate.sh
+</pre>
+
+Initialize the search indexes:
+
+<pre>
+/vagrant/scripts/search_initialize.sh
 </pre>
 
 ## Fake certificate errors in browser

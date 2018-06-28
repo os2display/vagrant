@@ -4,7 +4,7 @@ cd /vagrant/htdocs/search_node && ./install.sh
 cd /vagrant/htdocs/middleware && ./install.sh
 
 # Make sure middleware/logs is created
-mkdir /vagrant/middleware/logs
+mkdir /vagrant/htdocs/middleware/logs
 
 echo "create database os2display" | mysql -uroot
 
