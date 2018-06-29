@@ -6,7 +6,7 @@
     es_version: "1.7.1"
     mysql_root_password: "vagrant"
     node_major_version: 6
-    domain: "os2display.vm"
+    domain: "itk-os2display.vm"
 
   pre_tasks:
     # Tasks that shold be run before roles.
