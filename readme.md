@@ -3,6 +3,7 @@ This vagrant development setup for os2display is built with ansible.
 
 This vagrant provides the setup for a local version of the os2display server setup.
 
+ * Runs Ubuntu.
  * It installs nginx, php, mysql, symfony, nodejs, redis, etc.
  * It installs a database "os2display" for the symfony backend.
  * Afterwards it starts up the search and middleware nodejs apps.
@@ -35,12 +36,16 @@ vagrant ssh
 /vagrant/scripts/site_setup.sh
 </pre>
 
-## Development version
-I you want to run in development mode. Run the following scripts.
+Activate the search indexes:
 
 <pre>
-scripts/dev_setup.sh
-scripts/dev_config.sh
+/vagrant/scripts/search_activate.sh
+</pre>
+
+Initialize the search indexes:
+
+<pre>
+/vagrant/scripts/search_initialize.sh
 </pre>
 
 ## Fake certificate errors in browser
@@ -53,16 +58,27 @@ Since we use self-signed certificated in this vagrant setup, you will need to ac
 
 And accepting the certificates.
 
-## Search errors in admin
-Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
-Create one of each type of content (channel,slide,screen,media) to fix this error.
+## Development version
+I you want to run in development mode. Run the following scripts.
+
+<pre>
+scripts/dev_setup.sh
+scripts/dev_config.sh
+</pre>
 
 # Troubleshoot
 
 ## Setup search
-If the indexes are not activated by the `scripts/activate_search_indexes.sh` script, do the following:
+If the indexes are not activated by the `scripts/search_activate.sh` script, do the following:
+
 When the vagrant is done bootstrapping the VM you need to activate the search index by logging into http://search.os2display.vm and click the _indexes_ tab.
 Then click the _activate_ links foreach index.
+
+## Search errors in admin
+If the indexes are not initialized by the `scripts/search_initialize.sh` script, do the following:
+
+Until content has been saved in the admin, the given search index will not have been created. This will result in "SearchPhaseExecutionException" error.
+Create one of each type of content (channel,slide,screen,media) to fix this error.
 
 ## MySQL access
 If you need to access the database from outside the VM with e.g. _Sequel Pro_ or any other SQL client that can connect via SSH the following can be used.
@@ -77,5 +93,6 @@ SSH Key: ~/.vagrant.d/insecure_private_key
 </pre>
 
 ## Logs
- * The middleware and search node have logs in their root folders _/vagrant/htdocs/search_node_ and _/vagrant/htdocs/middleware_
+ * The middleware and search node have logs in their logs folders _/vagrant/htdocs/search_node/logs_ and _/vagrant/htdocs/middleware/logs_
  * Nginx have logs in _/var/log/nginx_
+ * Supervisor logs in _/var/log/supervisor_
