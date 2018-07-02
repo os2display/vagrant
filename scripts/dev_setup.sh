@@ -12,10 +12,35 @@ cd packages
 mkdir os2display
 cd os2display
 
-git clone --branch=master git@github.com:os2display/core-bundle
-git clone --branch=master git@github.com:os2display/media-bundle
-git clone --branch=master git@github.com:os2display/admin-bundle
-git clone --branch=master git@github.com:os2display/default-template-bundle
+GIT_ORGANIZATION=itk-os2display
+
+function clone_latest {
+  git clone --branch=master https://github.com/$GIT_ORGANIZATION/$1.git
+
+#  If you can use ssh access to the git repository, you can do this instead:
+#  git clone --branch=master git@github.com:$GIT_ORGANIZATION/$1.git
+
+  cd $1
+
+  latesttag=$(git describe --tags)
+  echo checking out ${latesttag}
+  git checkout ${latesttag}
+
+  cd ..
+}
+
+BUNDLES="core-bundle
+media-bundle
+admin-bundle
+default-template-bundle"
+
+for BUNDLE in $BUNDLES
+do
+(
+    clone_latest $BUNDLE
+)
+done
+
 cd ..
 
 cd ..

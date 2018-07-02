@@ -19,17 +19,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.boot_timeout = 60
 
   # Hostname(s)
-  config.vm.hostname = "itk-os2display.vm"
+  config.vm.hostname = "os2display.vm"
   config.hostsupdater.aliases = [
     # Add additional hostnames here.
-    "admin.itk-os2display.vm",
-    "screen.itk-os2display.vm",
-    "middleware.itk-os2display.vm",
-    "search.itk-os2display.vm"
+    "admin.os2display.vm",
+    "screen.os2display.vm",
+    "middleware.os2display.vm",
+    "search.os2display.vm"
   ]
 
   config.vm.provision "shell", inline: <<-SHELL
-    sed -i '$ a 127.0.1.1 screen.itk-os2display.vm admin.itk-os2display.vm search.itk-os2display.vm middleware.itk-os2display.vm' /etc/hosts
+    sed -i '$ a 127.0.1.1 screen.os2display.vm admin.os2display.vm search.os2display.vm middleware.os2display.vm' /etc/hosts
   SHELL
 
   config.bindfs.bind_folder '/vagrant', '/vagrant'
