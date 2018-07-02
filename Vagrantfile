@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # IP
-  config.vm.network "private_network", ip: "192.168.50.199"
+  config.vm.network "private_network", ip: "192.168.50.129"
 
   # Shared folder
   config.vm.synced_folder ".", "/vagrant",
@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     :mount_options => ['actimeo=2']
 
   # Timeout if box hangs
-  config.vm.boot_timeout = 30
+  config.vm.boot_timeout = 60
 
   # Hostname(s)
   config.vm.hostname = "os2display.vm"
@@ -31,6 +31,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     sed -i '$ a 127.0.1.1 screen.os2display.vm admin.os2display.vm search.os2display.vm middleware.os2display.vm' /etc/hosts
   SHELL
+
+  config.bindfs.bind_folder '/vagrant', '/vagrant'
 
   # What to install
   config.vm.provision :ansible do |ansible|

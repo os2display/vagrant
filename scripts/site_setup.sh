@@ -3,6 +3,9 @@
 cd /vagrant/htdocs/search_node && ./install.sh
 cd /vagrant/htdocs/middleware && ./install.sh
 
+# Make sure middleware/logs is created
+mkdir /vagrant/htdocs/middleware/logs
+
 echo "create database os2display" | mysql -uroot
 
 cd /vagrant/htdocs/admin/ && composer install
@@ -10,6 +13,13 @@ cd /vagrant/htdocs/admin/ && app/console doctrine:migrations:migrate --no-intera
 
 # Add admin user
 cd /vagrant/htdocs/admin/ && app/console fos:user:create admin admin@admin.os2display.vm admin --super-admin
+
+# Import templates
+cd /vagrant/htdocs/admin/ && app/console os2display:core:templates:load
+
+# Enable all temp
+cd /vagrant/htdocs/admin/ && app/console doctrine:query:sql "UPDATE ik_screen_templates SET enabled=1;"
+cd /vagrant/htdocs/admin/ && app/console doctrine:query:sql "UPDATE ik_slide_templates SET enabled=1;"
 
 cp /vagrant/htdocs/search_node/example.config.json /vagrant/htdocs/search_node/config.json
 
@@ -27,3 +37,8 @@ sudo cp /vagrant/templates/supervisor-job-queue.j2 /etc/supervisor/conf.d/job_qu
 sudo cp /vagrant/templates/supervisor-middleware.j2 /etc/supervisor/conf.d/middleware.conf
 sudo cp /vagrant/templates/supervisor-search_node.j2 /etc/supervisor/conf.d/search_node.conf
 sudo service supervisor restart
+
+# Change nginx user and group to vagrant to avoid permission issues.
+sudo sed -i 's/user = www-data/user = vagrant/g' /etc/php/5.6/fpm/pool.d/www.conf
+sudo sed -i 's/group = www-data/group = vagrant/g' /etc/php/5.6/fpm/pool.d/www.conf
+sudo service php5.6-fpm restart

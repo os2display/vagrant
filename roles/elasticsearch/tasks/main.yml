@@ -7,8 +7,10 @@
   tags: elasticsearch
 
 - name: Setup run-level
-  command: "update-rc.d elasticsearch defaults 95 10 > /dev/null 2>&1"
+  command: "systemctl enable elasticsearch.service"
   tags: elasticsearch
+  become: true
+  become_user: root
 
 - name: Setup ICU
   command: "/usr/share/elasticsearch/bin/plugin install elasticsearch/elasticsearch-analysis-icu/2.5.0"

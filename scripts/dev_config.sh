@@ -20,7 +20,8 @@ fi
 
 cp -v $dir/composer.json $dir/$composer_dev
 
-#
+COMPOSER_PATH="$(which composer)"
+
 for vendor_dir in $packages_dir/*/ ; do
     vendor=$(basename "$vendor_dir")
     echo $vendor
@@ -29,12 +30,14 @@ for vendor_dir in $packages_dir/*/ ; do
         package=$(basename "$package_dir")
         echo - $package
 
-		COMPOSER=$dir/$composer_dev composer config repositories.$vendor/$package path ../../packages/$vendor/$package
+        COMPOSER=$dir/composer-dev.json php -d memory_limit=-1 $COMPOSER_PATH config repositories.$vendor/$package path ../../packages/$vendor/$package
     done
 done
 
+rm -rf $dir/vendor/os2display
+
 # Install packages.
 cd $dir
-rm -rf vendor/*
-COMPOSER=composer-dev.json composer install
+COMPOSER=$dir/composer-dev.json php -d memory_limit=-1 $COMPOSER_PATH install
+app/console assets:install --symlink --relative
 cd ../..
