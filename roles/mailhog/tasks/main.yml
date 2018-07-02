@@ -1,0 +1,47 @@
+---
+- name: Create /opt/mailhog/bin directory
+  file:
+    path: /opt/mailhog/bin
+    state: directory
+    mode: u=rwx,go=rx
+  tags: [mailhog]
+
+- name: Install MailHog
+  get_url:
+    url: https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64
+    dest: /opt/mailhog/bin/MailHog
+    mode: u=rx,go=x
+  tags: [mailhog]
+
+- name: Create MailHog service
+  template:
+    src: mailhog.init.d.j2
+    dest: /etc/init.d/mailhog
+    mode: u=rwx,g=rx,o=rx
+  tags: [mailhog]
+
+- name: Enable MailHog service
+  command: update-rc.d mailhog defaults
+  tags: [mailhog]
+
+- name: Start MailHog service
+  service:
+    name: mailhog
+    state: started
+  tags: [mailhog]
+
+- name: Create mailhog php ini config file
+  lineinfile:
+    dest: "/etc/php{{ '5' if php_version.startswith('5.') else '/' ~ php_version }}/mods-available/mailhog.ini"
+    line: sendmail_path = /opt/mailhog/bin/MailHog sendmail
+    state: present
+    create: true
+  when: php_version is defined
+  tags: [mailhog, php7]
+
+- name: Enable mailhog php ini config
+  command: "/usr/sbin/{{ 'php5enmod' if php_version.startswith('5.') else 'phpenmod'}} -s ALL mailhog"
+  when: php_version is defined
+  notify:
+    - reload nginx
+  tags: [mailhog, php5]

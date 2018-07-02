@@ -1,0 +1,55 @@
+---
+- name: Install pip
+  apt: name=python-pip state=latest update_cache=yes
+  tags: memcached
+
+- name: Ensure python OpenSSL dependencies are installed.
+  pip:
+    name: pyOpenSSL
+    state: present
+  tags: local
+
+- name: Creates SSL directory
+  file: path=/etc/ssl/nginx/ state=directory
+  tags: local
+
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: /etc/ssl/nginx/server.key
+  tags: local
+
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: /etc/ssl/nginx/server.csr
+    privatekey_path: /etc/ssl/nginx/server.key
+    common_name: "*.{{ domain }}"
+  tags: local
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: /etc/ssl/nginx/server.cert
+    privatekey_path: /etc/ssl/nginx/server.key
+    csr_path: /etc/ssl/nginx/server.csr
+    provider: selfsigned
+  tags: local
+
+- name: Configure nginx "admin"
+  template: src=nginx-admin.j2 dest=/etc/nginx/sites-enabled/admin.{{ domain }} backup=yes
+  tags: local
+
+- name: Configure nginx "middleware"
+  template: src=nginx-middleware.j2 dest=/etc/nginx/sites-enabled/middleware.{{ domain }} backup=yes
+  tags: local
+
+- name: Configure nginx "screen"
+  template: src=nginx-screen.j2 dest=/etc/nginx/sites-enabled/screen.{{ domain }} backup=yes
+  tags: local
+
+- name: Configure nginx "search"
+  template: src=nginx-search.j2 dest=/etc/nginx/sites-enabled/search.{{ domain }} backup=yes
+  tags: local
+
+- name: Ensure nginx is restarted
+  service: name=nginx state=restarted
+  tags: local
+  

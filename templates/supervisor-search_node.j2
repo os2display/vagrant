@@ -1,0 +1,8 @@
+[program:search_node]
+command=node /vagrant/htdocs/search_node/app.js
+autostart=true
+autorestart=true
+environment=NODE_ENV=production
+stderr_logfile=/var/log/supervisor/search-node.err.log
+stdout_logfile=/var/log/supervisor/search-node.out.log
+user=vagrant

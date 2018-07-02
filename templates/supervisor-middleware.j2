@@ -1,0 +1,8 @@
+[program:middleware]
+command=node /vagrant/htdocs/middleware/app.js
+autostart=true
+autorestart=true
+environment=NODE_ENV=production
+stderr_logfile=/var/log/supervisor/middleware.err.log
+stdout_logfile=/var/log/supervisor/middleware.out.log
+user=vagrant

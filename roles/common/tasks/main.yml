@@ -1,0 +1,53 @@
+---
+- name: Install
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - git
+    - htop
+    - locales-all
+    - bash-completion
+    - sudo
+    - nmap
+    - mc
+    - lynx
+    - rcconf
+    - zip
+    - build-essential
+    - automake
+    - autoconf
+    - bsd-mailx
+    - rsync
+    - unzip
+    - git-core
+    - openssl-blacklist
+    - imagemagick
+    - supervisor
+    - ntp
+  tags: common
+
+- name: Configure timezone
+  copy: content={{ timezone }} dest=/etc/timezone owner=root group=root mode=644 backup=yes
+  notify: update timezone
+  tags: common
+
+- name: Configure localtime
+  file: src=/usr/share/zoneinfo/{{ timezone }} dest=/etc/localtime owner=root group=root mode=644 state=link force=yes backup=yes
+  tags: common
+
+- name: Add alise.
+  lineinfile:
+    dest=/etc/bash.bashrc
+    line="alias ll='ls -l'"
+    state=present
+    insertafter=EOF
+    create=True
+  tags: common
+
+- name: Add base scripts to path
+  lineinfile:
+    dest=/etc/bash.bashrc
+    line="[ -e /opt/base/scripts ] && export PATH=/opt/base/scripts:$PATH"
+    state=present
+    insertafter=EOF
+    create=True
+  tags: common

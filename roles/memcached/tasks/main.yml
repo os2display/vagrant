@@ -1,0 +1,8 @@
+---
+- name: Install
+  apt: name=memcached state=latest update_cache=yes
+  tags: memcached
+
+- name: Ensure service is running
+  service: name=memcached state=started
+  tags: memcached
