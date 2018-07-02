@@ -1,0 +1,80 @@
+{
+  "e7df7cd2ca07f4f1ab415d457a6e1c13": {
+    "name": "os2display",
+    "tag": "private",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false
+      },
+      {
+        "type": "string",
+        "country": "DK",
+        "language": "da",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false,
+        "geopoint": false,
+        "field": "name"
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
+  },
+  "itkdevshare": {
+    "name": "ITK Dev Share",
+    "tag": "shared",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false
+      },
+      {
+        "field": "slides",
+        "indexable": false,
+        "type": "object",
+        "raw": false
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
+  },
+  "bibshare": {
+    "name": "Biblioteks Share",
+    "tag": "shared",
+    "fields": [
+      {
+        "field": "title",
+        "type": "string",
+        "language": "da",
+        "country": "DK",
+        "default_analyzer": "string_index",
+        "default_indexer": "analyzed",
+        "sort": true,
+        "indexable": true,
+        "raw": false
+      },
+      {
+        "field": "slides",
+        "indexable": false,
+        "type": "object",
+        "raw": false
+      }
+    ],
+    "dates": [ "created_at", "updated_at" ]
+  }
+}

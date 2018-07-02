@@ -1,7 +1,10 @@
 htdocs
+packages
 *.old
 ~
 *.bak
 .vagrant
 docs
 .idea
+ubuntu-xenial-16.04-cloudimg-console.log
+playbook.retry

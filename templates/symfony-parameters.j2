@@ -1,0 +1,42 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: os2display
+    database_user: root
+    database_password: {{ mysql_root_password }}
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: da
+    secret: ThisTokenIsNotSoSecretChangeIt
+    debug_toolbar: true
+    debug_redirects: false
+    use_assetic_controller: true
+    absolute_path_to_server: 'https://admin.{{ domain }}'
+    zencoder_api: 1234567890
+    mailer_from_email: webmaster@ik3.{{ domain }}
+    mailer_from_name: Webmaster {{ domain }}
+    templates_directory: ik-templates/
+    sharing_host: https://search.{{ domain }}
+    sharing_path: /api
+    sharing_apikey: 88cfd4b277f3f8b6c7c15d7a84784067
+    search_host: https://search.{{ domain }}
+    search_path: /api
+    search_apikey: 795359dd2c81fa41af67faa2f9adbd32
+    search_index: e7df7cd2ca07f4f1ab415d457a6e1c13
+    middleware_host: https://middleware.{{ domain }}
+    middleware_path: /api
+    middleware_apikey: 059d9d9c50e0c45b529407b183b6a02f
+    site_title: os2display
+    koba_apikey: b70a6d8511e05aa737ee68126d801558
+    koba_path: http://192.168.50.21
+    version: dev
+    itk_log_version: 1
+    itk_log_error_callback: /api/error
+    itk_log_log_to_console: true
+    itk_log_log_level: all
+    database_server_version: 5.5
+    sharing_enabled: true
+    search_filter_default: all
