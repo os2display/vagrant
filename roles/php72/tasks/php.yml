@@ -27,3 +27,7 @@
 - name: Configure opcache
   template: src=opcache.ini.j2 dest=/etc/php/7.2/mods-available/opcache.ini backup=yes
   tags: php7
+
+- name: Configure xdebug
+  template: src=xdebug.ini.j2 dest=/etc/php/7.2/mods-available/xdebug.ini backup=yes
+  tags: php72
