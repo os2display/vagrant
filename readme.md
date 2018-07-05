@@ -52,6 +52,12 @@ Initialize the search indexes:
 /vagrant/scripts/search_initialize.sh
 </pre>
 
+Initialize the shared search indexes:
+
+<pre>
+/vagrant/scripts/shared_search_initialize.sh
+</pre>
+
 ## Fake certificate errors in browser
 Since we use self-signed certificated in this vagrant setup, you will need to accept the certificates in the browser, by visiting:
 
