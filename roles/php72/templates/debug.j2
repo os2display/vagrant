@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# for Symfony apps use following
+env PHP_IDE_CONFIG="serverName={{ ansible_fqdn }}" XDEBUG_CONFIG="idekey=PHPSTORM" SYMFONY_DEBUG="1" $@

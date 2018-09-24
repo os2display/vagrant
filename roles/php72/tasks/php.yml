@@ -31,3 +31,7 @@
 - name: Configure xdebug
   template: src=xdebug.ini.j2 dest=/etc/php/7.2/mods-available/xdebug.ini backup=yes
   tags: php72
+
+- name: Configure Debug Script
+  template: src=debug.j2 dest=/usr/bin/debug mode=0777
+  tags: php72
