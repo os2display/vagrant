@@ -1,5 +1,9 @@
 # os2display/vagrant Changelog
 
+## 6.0.1
+
+* Removed bindfs.
+
 ## 6.0.0
 
 * Changed to ansible vagrant provisioning.
