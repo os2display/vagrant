@@ -19,16 +19,11 @@ echo "${bold}Cloning repositories${normal}"
 mkdir htdocs
 cd htdocs
 
-git clone git@github.com:search-node/search_node.git search_node
+git clone https://github.com/search-node/search_node.git search_node
 
-git clone git@github.com:itk-os2display/docs.git docs
-
-git clone git@github.com:itk-os2display/admin.git admin
-cd admin
-git checkout symf34
-cd ..
-
-git clone git@github.com:itk-os2display/middleware.git middleware
-git clone git@github.com:itk-os2display/screen.git screen
+git clone https://github.com/os2display/docs.git docs
+git clone https://github.com/os2display/admin.git admin
+git clone https://github.com/os2display/middleware.git middleware
+git clone https://github.com/os2display/screen.git screen
 
 cd ..

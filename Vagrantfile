@@ -32,6 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     sed -i '$ a 127.0.1.1 screen.os2display.vm admin.os2display.vm search.os2display.vm middleware.os2display.vm' /etc/hosts
   SHELL
 
+  config.bindfs.bind_folder '/vagrant', '/vagrant'
+
   # What to install
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "playbook.yml"
