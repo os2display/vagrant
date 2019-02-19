@@ -12,7 +12,7 @@ cd packages
 mkdir os2display
 cd os2display
 
-GIT_ORGANIZATION=itk-os2display
+GIT_ORGANIZATION=os2display
 
 function clone_latest {
   git clone --branch=master https://github.com/$GIT_ORGANIZATION/$1.git
