@@ -1,5 +1,9 @@
 # os2display/vagrant Changelog
 
+## 7.0.0
+
+* Symfony 3.4 upgrade.
+
 ## 6.0.1
 
 * Removed bindfs.
