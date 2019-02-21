@@ -39,5 +39,5 @@ rm -rf $dir/vendor/os2display
 # Install packages.
 cd $dir
 COMPOSER=$dir/composer-dev.json php -d memory_limit=-1 $COMPOSER_PATH install
-app/console assets:install --symlink --relative
+bin/console assets:install --symlink --relative
 cd ../..

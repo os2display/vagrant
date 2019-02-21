@@ -25,4 +25,5 @@ git clone https://github.com/os2display/docs.git docs
 git clone https://github.com/os2display/admin.git admin
 git clone https://github.com/os2display/middleware.git middleware
 git clone https://github.com/os2display/screen.git screen
+
 cd ..

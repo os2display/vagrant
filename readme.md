@@ -52,6 +52,12 @@ Initialize the search indexes:
 /vagrant/scripts/search_initialize.sh
 </pre>
 
+Initialize the shared search indexes:
+
+<pre>
+/vagrant/scripts/shared_search_initialize.sh
+</pre>
+
 ## Fake certificate errors in browser
 Since we use self-signed certificated in this vagrant setup, you will need to accept the certificates in the browser, by visiting:
 
@@ -152,6 +158,6 @@ SSH Key: ~/.vagrant.d/insecure_private_key
 </pre>
 
 # Logs
- * The middleware and search node have logs in their logs folders _/vagrant/htdocs/search_node/logs_ and _/vagrant/htdocs/middleware/logs_
- * Nginx have logs in _/var/log/nginx_
- * Supervisor logs in _/var/log/supervisor_
+* The middleware and search node have logs in their logs folders _/vagrant/htdocs/search_node/logs_ and _/vagrant/htdocs/middleware/logs_
+* Nginx have logs in _/var/log/nginx_
+* Supervisor logs in _/var/log/supervisor_
