@@ -1,5 +1,9 @@
 # os2display/vagrant Changelog
 
+## 7.1.0
+
+* Added nginx config for screen-bundle.
+
 ## 7.0.0
 
 * Symfony 3.4 upgrade.
